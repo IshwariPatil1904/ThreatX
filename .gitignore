@@ -1,0 +1,14 @@
+# Third-party compiled bundle (install `oqs` via pip instead for native PQC)
+EDI/liboqs/
+
+# TLS certificates (private key) - regenerate via openssl (see README)
+EDI/certs/
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+
+# Runtime keys / editor config
+EDI/session_key.bin
+.vscode/

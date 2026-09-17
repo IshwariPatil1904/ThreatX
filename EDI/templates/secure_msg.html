@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Share &amp; Retrieve Secure Message — ThreatX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/threatx.css') }}">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a href="{{ url_for('index_page') }}" class="brand">
+      <span class="brand__mark"><i class="fa-solid fa-lock"></i></span>
+      <span class="brand__name">Threat<span>X</span></span>
+    </a>
+    <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+    <nav class="nav__menu" id="navMenu">
+      <a href="{{ url_for('index_page') }}" class="nav__link"><i class="fa-solid fa-house"></i>Home</a>
+      <a href="{{ url_for('home_page') }}" class="nav__link"><i class="fa-solid fa-table-columns"></i>Dashboard</a>
+      <div class="nav-dropdown">
+        <a href="{{ url_for('talkroom_page') }}" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-comments"></i>Chat <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('talkroom_page') }}"><i class="fa-solid fa-door-open"></i>Talkroom</a>
+          <a href="{{ url_for('demo_page') }}"><i class="fa-solid fa-flask"></i>Encryption Demo</a>
+        </div>
+      </div>
+      <a href="{{ url_for('team_page') }}" class="nav__link"><i class="fa-solid fa-users"></i>Team</a>
+      <a href="{{ url_for('faq_page') }}" class="nav__link"><i class="fa-solid fa-circle-question"></i>FAQ</a>
+      <div class="nav-dropdown">
+        <a href="#" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-scale-balanced"></i>Legal <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('terms_page') }}"><i class="fa-solid fa-file-contract"></i>Terms</a>
+          <a href="{{ url_for('about_page') }}"><i class="fa-solid fa-circle-info"></i>About</a>
+        </div>
+      </div>
+      <a href="{{ url_for('contact_page') }}" class="nav__link"><i class="fa-solid fa-envelope"></i>Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="{{ url_for('login_route') }}" class="btn btn--ghost">Log in</a>
+      <a href="{{ url_for('signup_route') }}" class="btn btn--primary">Sign up</a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="container container--narrow">
+    <div class="page-hero">
+      <span class="eyebrow">Secure messaging tool</span>
+      <h1>Share &amp; retrieve secure message</h1>
+      <p class="muted">Server: <span class="mono" id="server-url">http://localhost:3000</span></p>
+    </div>
+
+    <!-- Step A -->
+    <section class="card mt-3">
+      <h2 class="card__title"><i class="fa-solid fa-user-plus" style="color: var(--accent);"></i> Step A — Create account &amp; keypair</h2>
+      <div class="field">
+        <label for="username">Username</label>
+        <input class="input" id="username" placeholder="alice or bob" />
+      </div>
+      <div style="display:flex; gap: 12px; flex-wrap: wrap;">
+        <button class="btn btn--primary" id="btn-gen"><i class="fa-solid fa-key"></i>Generate RSA keypair &amp; save</button>
+        <button class="btn btn--ghost" id="btn-import"><i class="fa-solid fa-file-import"></i>Import private key</button>
+      </div>
+      <div id="key-status" class="status"></div>
+      <p><small class="hint">Private key is stored in browser for demo. Use secure storage in production.</small></p>
+    </section>
+
+    <!-- Step B -->
+    <section class="card mt-3">
+      <h2 class="card__title"><i class="fa-solid fa-atom" style="color: var(--accent);"></i> Step B — Produce symmetric AES key</h2>
+      <div class="form-grid">
+        <div>
+          <div class="field">
+            <label for="photon-count">QKD photon count</label>
+            <input class="input" id="photon-count" type="number" min="8" max="256" value="32" />
+          </div>
+          <div style="display:flex; gap: 12px; flex-wrap: wrap;">
+            <button class="btn btn--primary" id="btn-run-qkd"><i class="fa-solid fa-play"></i>Run QKD</button>
+            <button class="btn btn--ghost" id="btn-clear-qkd"><i class="fa-solid fa-eraser"></i>Clear</button>
+          </div>
+        </div>
+        <div>
+          <div class="field">
+            <label for="aes-length">Or generate random AES key</label>
+            <select class="input" id="aes-length">
+              <option value="128">AES-128</option>
+              <option value="256">AES-256</option>
+            </select>
+          </div>
+          <button class="btn btn--primary" id="btn-generate-aes" style="width:100%;"><i class="fa-solid fa-dice"></i>Generate AES</button>
+        </div>
+      </div>
+      <div id="qkd-status" class="status"></div>
+      <div class="field">
+        <label for="symmetric-preview">Current symmetric key (hex preview)</label>
+        <pre id="symmetric-preview" class="mono" style="margin:0; background: var(--bg-0); border:1px solid var(--line); border-radius: var(--radius-s); padding: 12px; overflow:auto; color: var(--accent);">No key generated yet</pre>
+      </div>
+    </section>
+
+    <!-- Step C -->
+    <section class="card mt-3">
+      <h2 class="card__title"><i class="fa-solid fa-shield" style="color: var(--accent);"></i> Step C — Encrypt &amp; upload</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="from-user">From</label>
+          <input class="input" id="from-user" placeholder="alice" />
+        </div>
+        <div class="field">
+          <label for="to-user">To</label>
+          <input class="input" id="to-user" placeholder="bob" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="plaintext">Message</label>
+        <textarea class="input" id="plaintext" rows="4">Hello! This is a secure message.</textarea>
+      </div>
+      <div style="display:flex; gap: 12px; flex-wrap: wrap;">
+        <button class="btn btn--primary" id="btn-encrypt-upload"><i class="fa-solid fa-cloud-arrow-up"></i>Encrypt &amp; upload</button>
+        <button class="btn btn--ghost" id="btn-encrypt-download"><i class="fa-solid fa-download"></i>Encrypt &amp; download</button>
+      </div>
+      <div id="encrypt-status" class="status"></div>
+      <div class="field">
+        <label for="share-id">Shareable message ID</label>
+        <input class="input mono" id="share-id" readonly />
+      </div>
+      <div class="field">
+        <label for="upload-log">Upload log</label>
+        <pre id="upload-log" class="mono" style="margin:0; background: var(--bg-0); border:1px solid var(--line); border-radius: var(--radius-s); padding: 12px; overflow:auto;"></pre>
+      </div>
+    </section>
+
+    <!-- Step D -->
+    <section class="card mt-3">
+      <h2 class="card__title"><i class="fa-solid fa-unlock-keyhole" style="color: var(--accent);"></i> Step D — Fetch &amp; decrypt</h2>
+      <div class="field">
+        <label for="fetch-id">Message ID</label>
+        <input class="input mono" id="fetch-id" placeholder="Paste message ID" />
+      </div>
+      <div style="display:flex; gap: 12px; flex-wrap: wrap;">
+        <button class="btn btn--primary" id="btn-fetch"><i class="fa-solid fa-cloud-arrow-down"></i>Fetch &amp; decrypt</button>
+        <button class="btn btn--ghost" id="btn-fetch-preview"><i class="fa-solid fa-eye"></i>Fetch preview</button>
+      </div>
+      <div id="fetch-status" class="status"></div>
+      <div class="field">
+        <label for="decrypted-output">Decrypted output</label>
+        <pre id="decrypted-output" class="mono" style="margin:0; background: var(--bg-0); border:1px solid var(--line); border-radius: var(--radius-s); padding: 12px; overflow:auto;">No message yet</pre>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  © ThreatX — Post-quantum secure communication
+</footer>
+
+<script src="{{ url_for('static', filename='js/threatx.js') }}"></script>
+<script>
+    // Global state
+    let currentUser = null;
+    let currentAesKey = null;
+    let currentRsaKeys = { privateKey: null, publicKey: null };
+    let messageStore = new Map(); // Simulated server storage
+
+    // DOM Elements
+    const statusElements = {
+      key: document.getElementById('key-status'),
+      qkd: document.getElementById('qkd-status'),
+      encrypt: document.getElementById('encrypt-status'),
+      fetch: document.getElementById('fetch-status')
+    };
+
+    // Utility functions
+    function showStatus(element, message, isError = false) {
+      element.textContent = message;
+      element.className = isError ? 'status error' : 'status success';
+      setTimeout(() => {
+        element.className = 'status';
+      }, 5000);
+    }
+
+    function arrayBufferToBase64(buffer) {
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    }
+
+    function base64ToArrayBuffer(base64) {
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return bytes.buffer;
+    }
+
+    function arrayBufferToHex(buffer) {
+      return Array.from(new Uint8Array(buffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+    }
+
+    function hexToArrayBuffer(hex) {
+      const bytes = new Uint8Array(hex.length / 2);
+      for (let i = 0; i < hex.length; i += 2) {
+        bytes[i/2] = parseInt(hex.substr(i, 2), 16);
+      }
+      return bytes.buffer;
+    }
+
+    // Generate RSA key pair
+    async function generateRSAKeyPair() {
+      try {
+        const keyPair = await crypto.subtle.generateKey(
+          {
+            name: "RSA-OAEP",
+            modulusLength: 2048,
+            publicExponent: new Uint8Array([1, 0, 1]),
+            hash: "SHA-256",
+          },
+          true,
+          ["encrypt", "decrypt"]
+        );
+        
+        currentRsaKeys.privateKey = keyPair.privateKey;
+        currentRsaKeys.publicKey = keyPair.publicKey;
+        
+        return keyPair;
+      } catch (error) {
+        console.error("Key generation error:", error);
+        throw error;
+      }
+    }
+
+    // Generate AES key
+    async function generateAESKey(length = 256) {
+      try {
+        const key = await crypto.subtle.generateKey(
+          {
+            name: "AES-GCM",
+            length: length,
+          },
+          true,
+          ["encrypt", "decrypt"]
+        );
+        
+        currentAesKey = key;
+        const exportedKey = await crypto.subtle.exportKey("raw", key);
+        document.getElementById('symmetric-preview').textContent = arrayBufferToHex(exportedKey);
+        
+        return key;
+      } catch (error) {
+        console.error("AES key generation error:", error);
+        throw error;
+      }
+    }
+
+    // Encrypt message with AES
+    async function encryptMessage(message, key) {
+      try {
+        const encoder = new TextEncoder();
+        const encodedMessage = encoder.encode(message);
+        
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        
+        const encryptedContent = await crypto.subtle.encrypt(
+          {
+            name: "AES-GCM",
+            iv: iv
+          },
+          key,
+          encodedMessage
+        );
+        
+        const combined = new Uint8Array(iv.length + encryptedContent.byteLength);
+        combined.set(iv, 0);
+        combined.set(new Uint8Array(encryptedContent), iv.length);
+        
+        return arrayBufferToBase64(combined);
+      } catch (error) {
+        console.error("Encryption error:", error);
+        throw error;
+      }
+    }
+
+    // Decrypt message with AES
+    async function decryptMessage(encryptedData, key) {
+      try {
+        const encryptedArray = base64ToArrayBuffer(encryptedData);
+        const iv = encryptedArray.slice(0, 12);
+        const data = encryptedArray.slice(12);
+        
+        const decryptedContent = await crypto.subtle.decrypt(
+          {
+            name: "AES-GCM",
+            iv: iv
+          },
+          key,
+          data
+        );
+        
+        const decoder = new TextDecoder();
+        return decoder.decode(decryptedContent);
+      } catch (error) {
+        console.error("Decryption error:", error);
+        throw error;
+      }
+    }
+
+    // Simulate QKD process
+    function simulateQKD(photonCount) {
+      return new Promise((resolve) => {
+        showStatus(statusElements.qkd, "Running quantum key distribution simulation...");
+        
+        setTimeout(() => {
+          const keyBytes = new Uint8Array(photonCount / 8);
+          crypto.getRandomValues(keyBytes);
+          
+          setTimeout(async () => {
+            const key = await crypto.subtle.importKey(
+              "raw",
+              keyBytes,
+              { name: "AES-GCM" },
+              true,
+              ["encrypt", "decrypt"]
+            );
+            
+            currentAesKey = key;
+            document.getElementById('symmetric-preview').textContent = arrayBufferToHex(keyBytes);
+            showStatus(statusElements.qkd, `QKD completed! Generated ${photonCount}-bit key.`);
+            resolve(key);
+          }, 1000);
+        }, 1500);
+      });
+    }
+
+    // Event listeners
+    document.getElementById('btn-gen').addEventListener('click', async () => {
+      const username = document.getElementById('username').value.trim();
+      if (!username) {
+        showStatus(statusElements.key, "Please enter a username first", true);
+        return;
+      }
+      
+      try {
+        currentUser = username;
+        await generateRSAKeyPair();
+        showStatus(statusElements.key, `RSA keypair generated for ${username}`);
+      } catch (error) {
+        showStatus(statusElements.key, "Key generation failed: " + error.message, true);
+      }
+    });
+
+    document.getElementById('btn-import').addEventListener('click', () => {
+      showStatus(statusElements.key, "Import functionality would be implemented here");
+    });
+
+    document.getElementById('btn-run-qkd').addEventListener('click', async () => {
+      const photonCount = parseInt(document.getElementById('photon-count').value);
+      if (photonCount < 8 || photonCount > 256) {
+        showStatus(statusElements.qkd, "Photon count must be between 8 and 256", true);
+        return;
+      }
+      
+      try {
+        await simulateQKD(photonCount);
+      } catch (error) {
+        showStatus(statusElements.qkd, "QKD simulation failed: " + error.message, true);
+      }
+    });
+
+    document.getElementById('btn-clear-qkd').addEventListener('click', () => {
+      currentAesKey = null;
+      document.getElementById('symmetric-preview').textContent = "No key generated yet";
+      document.getElementById('photon-count').value = "32";
+      showStatus(statusElements.qkd, "QKD key cleared");
+    });
+
+    document.getElementById('btn-generate-aes').addEventListener('click', async () => {
+      const length = parseInt(document.getElementById('aes-length').value);
+      
+      try {
+        await generateAESKey(length);
+        showStatus(statusElements.qkd, `AES-${length} key generated successfully`);
+      } catch (error) {
+        showStatus(statusElements.qkd, "AES key generation failed: " + error.message, true);
+      }
+    });
+
+    document.getElementById('btn-encrypt-upload').addEventListener('click', async () => {
+      const fromUser = document.getElementById('from-user').value.trim();
+      const toUser = document.getElementById('to-user').value.trim();
+      const message = document.getElementById('plaintext').value;
+      
+      if (!fromUser || !toUser || !message) {
+        showStatus(statusElements.encrypt, "Please fill in all fields", true);
+        return;
+      }
+      
+      if (!currentAesKey) {
+        showStatus(statusElements.encrypt, "Please generate an encryption key first", true);
+        return;
+      }
+      
+      try {
+        // Encrypt the message
+        const encryptedMessage = await encryptMessage(message, currentAesKey);
+        
+        // Generate a message ID
+        const messageId = arrayBufferToHex(crypto.getRandomValues(new Uint8Array(8)));
+        
+        // Store the message (simulated server)
+        messageStore.set(messageId, {
+          from: fromUser,
+          to: toUser,
+          message: encryptedMessage,
+          timestamp: new Date().toISOString()
+        });
+        
+        // Update UI
+        document.getElementById('share-id').value = messageId;
+        document.getElementById('upload-log').textContent = `Message encrypted and stored with ID: ${messageId}`;
+        showStatus(statusElements.encrypt, "Message encrypted and uploaded successfully");
+      } catch (error) {
+        showStatus(statusElements.encrypt, "Encryption failed: " + error.message, true);
+      }
+    });
+
+    document.getElementById('btn-encrypt-download').addEventListener('click', async () => {
+      showStatus(statusElements.encrypt, "Download functionality would be implemented here");
+    });
+
+    document.getElementById('btn-fetch').addEventListener('click', async () => {
+      const messageId = document.getElementById('fetch-id').value.trim();
+      
+      if (!messageId) {
+        showStatus(statusElements.fetch, "Please enter a message ID", true);
+        return;
+      }
+      
+      if (!currentAesKey) {
+        showStatus(statusElements.fetch, "No decryption key available", true);
+        return;
+      }
+      
+      try {
+        // Retrieve the message (simulated server)
+        const messageData = messageStore.get(messageId);
+        
+        if (!messageData) {
+          showStatus(statusElements.fetch, "Message not found", true);
+          return;
+        }
+        
+        // Decrypt the message
+        const decryptedMessage = await decryptMessage(messageData.message, currentAesKey);
+        
+        // Update UI
+        document.getElementById('decrypted-output').textContent = decryptedMessage;
+        showStatus(statusElements.fetch, "Message decrypted successfully");
+      } catch (error) {
+        showStatus(statusElements.fetch, "Decryption failed: " + error.message, true);
+      }
+    });
+
+    document.getElementById('btn-fetch-preview').addEventListener('click', () => {
+      const messageId = document.getElementById('fetch-id').value.trim();
+      
+      if (!messageId) {
+        showStatus(statusElements.fetch, "Please enter a message ID", true);
+        return;
+      }
+      
+      const messageData = messageStore.get(messageId);
+      
+      if (!messageData) {
+        showStatus(statusElements.fetch, "Message not found", true);
+        return;
+      }
+      
+      document.getElementById('decrypted-output').textContent = `From: ${messageData.from}\nTo: ${messageData.to}\nTime: ${messageData.timestamp}\n\n[Encrypted content - requires key to decrypt]`;
+      showStatus(statusElements.fetch, "Message preview loaded");
+    });
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set current user from input if available
+      const usernameInput = document.getElementById('username');
+      if (usernameInput.value) {
+        currentUser = usernameInput.value;
+      }
+      
+      // Add event listener to update current user
+      usernameInput.addEventListener('change', () => {
+        currentUser = usernameInput.value.trim();
+      });
+    });
+  </script>
+
+</body>
+</html>

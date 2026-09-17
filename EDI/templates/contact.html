@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact — ThreatX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/threatx.css') }}">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a href="{{ url_for('index_page') }}" class="brand">
+      <span class="brand__mark"><i class="fa-solid fa-lock"></i></span>
+      <span class="brand__name">Threat<span>X</span></span>
+    </a>
+    <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+    <nav class="nav__menu" id="navMenu">
+      <a href="{{ url_for('index_page') }}" class="nav__link"><i class="fa-solid fa-house"></i>Home</a>
+      <a href="{{ url_for('home_page') }}" class="nav__link"><i class="fa-solid fa-table-columns"></i>Dashboard</a>
+      <div class="nav-dropdown">
+        <a href="{{ url_for('talkroom_page') }}" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-comments"></i>Chat <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('talkroom_page') }}"><i class="fa-solid fa-door-open"></i>Talkroom</a>
+          <a href="{{ url_for('demo_page') }}"><i class="fa-solid fa-flask"></i>Encryption Demo</a>
+        </div>
+      </div>
+      <a href="{{ url_for('team_page') }}" class="nav__link"><i class="fa-solid fa-users"></i>Team</a>
+      <a href="{{ url_for('faq_page') }}" class="nav__link"><i class="fa-solid fa-circle-question"></i>FAQ</a>
+      <div class="nav-dropdown">
+        <a href="#" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-scale-balanced"></i>Legal <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('terms_page') }}"><i class="fa-solid fa-file-contract"></i>Terms</a>
+          <a href="{{ url_for('about_page') }}"><i class="fa-solid fa-circle-info"></i>About</a>
+        </div>
+      </div>
+      <a href="{{ url_for('contact_page') }}" class="nav__link is-active"><i class="fa-solid fa-envelope"></i>Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="{{ url_for('login_route') }}" class="btn btn--ghost">Log in</a>
+      <a href="{{ url_for('signup_route') }}" class="btn btn--primary">Sign up</a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="container" style="max-width: 1020px;">
+    <div class="page-hero">
+      <span class="eyebrow">Get in touch</span>
+      <h1>Contact ThreatX</h1>
+      <p class="lead">Have a question about the ThreatX demo, QKD simulation, or want to collaborate? Send us a message — we'll respond to academic or collaboration requests.</p>
+    </div>
+
+    <div class="contact-split mt-2">
+      <div class="card">
+        <form id="contactForm" autocomplete="on" novalidate>
+          <div class="field">
+            <label for="name">Name</label>
+            <input class="input" id="name" name="name" type="text" placeholder="Your full name" required>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input class="input" id="email" name="email" type="email" placeholder="you@university.edu" required>
+          </div>
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea class="input" id="message" name="message" rows="5" placeholder="How can we help?" required></textarea>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center; flex-wrap: wrap;">
+            <button type="submit" class="btn btn--primary"><i class="fa-solid fa-paper-plane"></i>Send message</button>
+            <span class="hint" id="contactResult" aria-live="polite"></span>
+          </div>
+          <p class="hint" style="margin-top: 16px;">
+            For security-sensitive enquiries, include a GPG public key or ask for our secure contact channel.
+          </p>
+        </form>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:center;">
+        <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style="width:100%; height:auto; display:block;">
+          <defs>
+            <linearGradient id="gradA" x1="0" x2="1">
+              <stop offset="0" stop-color="#8b5cf6"/>
+              <stop offset="1" stop-color="#06b6d4"/>
+            </linearGradient>
+            <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="8" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <rect width="100%" height="100%" fill="none"/>
+          <g transform="translate(60,60)">
+            <circle cx="360" cy="200" r="150" fill="none" stroke="url(#gradA)" stroke-width="6" opacity="0.12" filter="url(#blur)"/>
+            <rect x="280" y="220" rx="18" ry="18" width="160" height="120" fill="#081428" stroke="url(#gradA)" stroke-width="3"/>
+            <path d="M300 220 C300 170 420 170 420 220" fill="none" stroke="#bcdcff" stroke-width="10" stroke-linecap="round" />
+            <circle cx="360" cy="270" r="16" fill="#071026"/>
+            <circle cx="360" cy="270" r="6" fill="#8b5cf6"/>
+            <g opacity="0.9" fill="#9fb0d0">
+              <circle cx="120" cy="110" r="3"/>
+              <circle cx="540" cy="120" r="2.2"/>
+              <circle cx="420" cy="30" r="2.4"/>
+            </g>
+            <path d="M40 260 Q170 80 300 260" stroke="#8b5cf6" stroke-width="2" fill="none" opacity="0.15"/>
+            <path d="M320 260 Q470 90 620 260" stroke="#06b6d4" stroke-width="2" fill="none" opacity="0.12"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  © ThreatX — Post-quantum secure communication
+</footer>
+
+<script src="{{ url_for('static', filename='js/threatx.js') }}"></script>
+<script>
+  document.getElementById('contactForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const message = document.getElementById('message').value.trim();
+    if(!name || !email || !message) {
+      document.getElementById('contactResult').textContent = 'Please complete all fields.';
+      return;
+    }
+    document.getElementById('contactResult').textContent = 'Thank you — message queued (demo).';
+    e.target.reset();
+    setTimeout(()=> document.getElementById('contactResult').textContent = '', 6000);
+  });
+</script>
+
+</body>
+</html>

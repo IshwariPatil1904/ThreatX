@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThreatX Secure Chat Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/threatx.css') }}">
+</head>
+<body>
+
+  <!-- Secure Session Banner -->
+  <div id="sessionBanner" class="session-banner">
+    Secure Session Not Active
+  </div>
+
+  <header class="nav">
+    <div class="nav__inner">
+      <a href="{{ url_for('index_page') }}" class="brand">
+        <span class="brand__mark"><i class="fa-solid fa-lock"></i></span>
+        <span class="brand__name">Threat<span>X</span></span>
+      </a>
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      <nav class="nav__menu" id="navMenu">
+        <a href="{{ url_for('index_page') }}" class="nav__link"><i class="fa-solid fa-house"></i>Home</a>
+        <a href="{{ url_for('home_page') }}" class="nav__link"><i class="fa-solid fa-table-columns"></i>Dashboard</a>
+        <div class="nav-dropdown">
+          <a href="{{ url_for('talkroom_page') }}" class="nav__link nav-dropdown-trigger is-active"><i class="fa-solid fa-comments"></i>Chat <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="nav-dropdown-menu">
+            <a href="{{ url_for('talkroom_page') }}"><i class="fa-solid fa-door-open"></i>Talkroom</a>
+            <a href="{{ url_for('demo_page') }}"><i class="fa-solid fa-flask"></i>Encryption Demo</a>
+          </div>
+        </div>
+        <a href="{{ url_for('team_page') }}" class="nav__link"><i class="fa-solid fa-users"></i>Team</a>
+        <a href="{{ url_for('faq_page') }}" class="nav__link"><i class="fa-solid fa-circle-question"></i>FAQ</a>
+        <div class="nav-dropdown">
+          <a href="#" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-scale-balanced"></i>Legal <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="nav-dropdown-menu">
+            <a href="{{ url_for('terms_page') }}"><i class="fa-solid fa-file-contract"></i>Terms</a>
+            <a href="{{ url_for('about_page') }}"><i class="fa-solid fa-circle-info"></i>About</a>
+          </div>
+        </div>
+        <a href="{{ url_for('contact_page') }}" class="nav__link"><i class="fa-solid fa-envelope"></i>Contact</a>
+      </nav>
+      <div class="nav__actions">
+        <a href="{{ url_for('login_route') }}" class="btn btn--ghost">Log in</a>
+        <a href="{{ url_for('signup_route') }}" class="btn btn--primary">Sign up</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="page-chat">
+
+      <div style="text-align:center; margin-bottom: 24px;">
+        <h1 style="font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin: 0 0 6px;">Secure chat room</h1>
+        <p class="muted" style="margin: 0;">End-to-end encrypted messaging with quantum-safe key exchange</p>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab active" onclick="switchTab('chat')"><i class="fa-solid fa-comments"></i>Secure Chat</div>
+        <div class="tab" onclick="switchTab('explanation')"><i class="fa-solid fa-circle-info"></i>How It Works</div>
+        <div class="tab" onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i>Settings</div>
+      </div>
+
+      <div class="tab-content active" id="chat-tab">
+        <div class="chat-layout">
+
+          <!-- Sidebar -->
+          <div class="chat-sidebar">
+
+            <div class="side-card side-user">
+              <div class="avatar-circle" id="sidebar-user-avatar">?</div>
+              <div class="side-user__info">
+                <div class="side-user__name" id="sidebar-user-name">Local user</div>
+                <div class="side-user__meta"><span class="online-user__dot"></span>Device identity</div>
+              </div>
+            </div>
+
+            <div class="side-card">
+              <div class="side-card__head">
+                <h3>Connection</h3>
+              </div>
+              <div class="conn-row">
+                <div class="conn-line">
+                  <span class="status-dot disconnected" id="connection-dot"></span>
+                  <span id="connection-status">Connection: Not Established</span>
+                </div>
+                <div class="conn-line">
+                  <i class="fa-solid fa-shield" style="color: var(--text-3);"></i>
+                  <span id="session-status">Encryption: Not Established</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="side-card">
+              <div class="side-card__head">
+                <h3>Online contacts</h3>
+              </div>
+              <div class="online-list" id="online-users">
+                <div class="online-user"><span class="online-user__dot"></span><span>Waiting for socket…</span></div>
+              </div>
+            </div>
+
+            <div class="side-card">
+              <div class="side-card__head">
+                <h3>Keys</h3>
+              </div>
+
+              <div class="key-box">
+                <div class="key-box__label"><i class="fa-solid fa-address-card"></i>Your public key</div>
+                <div class="key-value" id="public-key">Not generated yet
+                  <button class="copy-btn" onclick="copyToClipboard('public-key')" style="display: none;">
+                    <i class="fa-solid fa-copy"></i> Copy
+                  </button>
+                </div>
+                <button id="generate-btn" class="btn btn--primary btn--block btn--sm"><i class="fa-solid fa-key"></i>Generate keys &amp; register</button>
+              </div>
+
+              <div class="key-box">
+                <div class="key-box__label"><i class="fa-solid fa-user-group"></i>Friend's public key</div>
+                <div class="key-value" id="friend-key">Waiting for friend to connect...
+                  <button class="copy-btn" onclick="copyToClipboard('friend-key')" style="display: none;">
+                    <i class="fa-solid fa-copy"></i> Copy
+                  </button>
+                </div>
+                <button id="friend-btn" class="btn btn--ghost btn--block btn--sm" disabled><i class="fa-solid fa-user-friends"></i>Enter friend's key</button>
+              </div>
+
+              <div class="key-box">
+                <div class="key-box__label"><i class="fa-solid fa-handshake"></i>Session key</div>
+                <div class="key-value" id="session-key">Not established yet
+                  <button class="copy-btn" onclick="copyToClipboard('session-key')" style="display: none;">
+                    <i class="fa-solid fa-copy"></i> Copy
+                  </button>
+                </div>
+                <button id="session-btn" class="btn btn--soft btn--block btn--sm" disabled><i class="fa-solid fa-handshake"></i>Establish session</button>
+              </div>
+            </div>
+
+            <div class="side-card mode-card">
+              <div class="side-card__head">
+                <h3>Encryption mode</h3>
+              </div>
+              <div>
+                <label for="securityMode" style="font-size:0.8rem; font-weight:600; color:var(--text-2); display:block; margin-bottom:6px;">
+                  <i class="fa-solid fa-shield-halved"></i> Encryption mode
+                </label>
+                <select id="securityMode" class="input">
+                  <option value="qkd">QKD + AES (Default)</option>
+                  <option value="hybrid">Hybrid (Kyber PQC + AES-256)</option>
+                </select>
+                <button id="applyModeBtn" class="btn btn--soft btn--block btn--sm"><i class="fa-solid fa-check"></i>Apply mode</button>
+                <div id="modeStatus" class="mode-status">
+                  <span class="mono">Default QKD mode active.</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div>
+                <label for="modeSelect" style="font-size:0.8rem; font-weight:600; color:var(--text-2); display:block; margin-bottom:6px;">Mode (for demo)</label>
+                <select id="modeSelect" class="input">
+                  <option value="qkd">QKD + AES</option>
+                  <option value="hybrid">Hybrid PQC-Kyber + AES</option>
+                </select>
+                <button id="start-btn" class="btn btn--primary btn--block btn--sm"><i class="fa-solid fa-play"></i>Start session</button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Chat panel -->
+          <div class="chat-panel">
+            <div class="chat-head">
+              <span class="status-dot connected"></span>
+              <div>
+                <div class="chat-head__name">ThreatX secure channel</div>
+                <div class="chat-head__meta">End-to-end encrypted</div>
+              </div>
+              <div class="chat-head__badges">
+                <span class="badge badge--ok"><i class="fa-solid fa-lock"></i>AES-256-GCM</span>
+                <span class="badge badge--violet"><i class="fa-solid fa-atom"></i>Quantum-safe</span>
+              </div>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+              <div id="chatEmptyState" class="empty-state">
+                <div class="empty-state__icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <h3>Secure communication starts here</h3>
+                <p>Your messages are protected end-to-end using ThreatX's cryptographic pipeline. Generate your keys and establish a session with a connected user to begin.</p>
+                <div class="flow">
+                  <div class="flow__step"><span class="flow__label">QKD</span><span class="flow__sub">BB84</span></div>
+                  <div class="flow__arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                  <div class="flow__step"><span class="flow__label">KEM</span><span class="flow__sub">Kyber512</span></div>
+                  <div class="flow__arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                  <div class="flow__step"><span class="flow__label">Encryption</span><span class="flow__sub">AES-GCM</span></div>
+                  <div class="flow__arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                  <div class="flow__step"><span class="flow__label">Secure message</span><span class="flow__sub">End-to-end</span></div>
+                </div>
+                <div class="sec-cards">
+                  <div class="sec-card"><i class="fa-solid fa-atom"></i><div><strong>Quantum Key Distribution</strong><span>BB84 protocol</span></div></div>
+                  <div class="sec-card"><i class="fa-solid fa-key"></i><div><strong>Post-Quantum KEM</strong><span>Kyber512</span></div></div>
+                  <div class="sec-card"><i class="fa-solid fa-lock"></i><div><strong>Message Encryption</strong><span>AES-256-GCM</span></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="chat-composer">
+              <input class="input" type="text" id="message-input" placeholder="Type your message here..." disabled>
+              <button id="send-btn" class="btn btn--primary" disabled><i class="fa-solid fa-paper-plane"></i>Send</button>
+            </div>
+            <div class="composer-hint">
+              <i class="fa-solid fa-lock"></i> End-to-end encrypted — plaintext never leaves your browser
+              <span class="composer-hint__spacer"></span>
+              <span class="badge badge--ok">AES-256-GCM</span>
+              <span class="badge badge--accent">Session key in memory</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="tab-content" id="explanation-tab">
+        <div class="doc-panel">
+          <h3><i class="fa-solid fa-circle-info"></i> How ThreatX Secure Chat works</h3>
+          <p class="muted">This implementation demonstrates a production-ready secure messaging system with quantum-inspired encryption:</p>
+          <ol>
+            <li><strong>Key Generation</strong> – Each user generates a public/private key pair in the browser. The public key is sent to the server and <strong>shown in full</strong> in "Your Public Key".</li>
+            <li><strong>Key Exchange</strong> – The server uses those public keys to perform either simulated QKD or post-quantum Kyber KEM, depending on the selected mode.</li>
+            <li><strong>Session Establishment</strong> – A shared secret is derived and turned into an AES-256 key using WebCrypto.</li>
+            <li><strong>Message Encryption</strong> – All chat messages are encrypted with AES-GCM in the browser before being sent.</li>
+            <li><strong>Message Decryption</strong> – The receiving browser decrypts using the same session key. The server never sees plaintext.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="tab-content" id="settings-tab">
+        <div class="doc-panel">
+          <h3><i class="fa-solid fa-gear"></i> Application settings</h3>
+
+          <div class="settings-row">
+            <div>
+              <h4>Auto-copy generated keys</h4>
+              <p>Automatically copy generated keys to your clipboard.</p>
+            </div>
+            <label class="check">
+              <input type="checkbox" id="auto-copy-key" checked>
+              <span class="check__box"></span>
+            </label>
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <h4>Show encrypted content</h4>
+              <p>Log encrypted message content to the browser console.</p>
+            </div>
+            <label class="check">
+              <input type="checkbox" id="show-encrypted" checked>
+              <span class="check__box"></span>
+            </label>
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <h4>Auto-establish session</h4>
+              <p>Automatically establish the secure session when both users are ready.</p>
+            </div>
+            <label class="check">
+              <input type="checkbox" id="auto-establish" checked>
+              <span class="check__box"></span>
+            </label>
+          </div>
+
+          <div style="margin-top: 26px;">
+            <button id="reset-btn" class="btn btn--danger"><i class="fa-solid fa-rotate-left"></i>Reset application</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    ThreatX — Post-quantum secure communication
+  </footer>
+
+  <!-- Friend Key Modal -->
+  <div class="modal" id="friend-key-modal" style="display:none;">
+    <div class="modal-content">
+      <h2>Enter friend's public key</h2>
+      <div class="field">
+        <label for="friend-key-input">Paste friend's public key here</label>
+        <input type="text" class="input" id="friend-key-input" placeholder="Paste friend's public key here">
+      </div>
+      <div class="modal-buttons">
+        <button class="btn btn--ghost" onclick="hideFriendKeyModal()">Cancel</button>
+        <button class="btn btn--primary" onclick="saveFriendKey()">Save key</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Mode Label -->
+  <div id="modeIndicator">
+    Mode: <span id="modeIndicatorText">QKD + AES</span> 🔵
+  </div>
+
+  <!-- Socket.IO client from CDN -->
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename='js/threatx.js') }}"></script>
+
+  <script>
+  // -------- Tabs --------
+  function switchTab(tabId) {
+      document.querySelectorAll(".tab-content").forEach(div => div.classList.remove("active"));
+      document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+      document.getElementById(tabId + "-tab").classList.add("active");
+      document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add("active");
+  }
+
+  // -------- Socket & state --------
+  const socket = io();
+  let username = null;
+  let peer = null;
+  let aesKey = null;
+  let mode = "qkd"; // default
+  let myPubB64 = null;
+
+  // DOM refs
+  const connectionDot = document.getElementById("connection-dot");
+  const connectionStatus = document.getElementById("connection-status");
+  const sessionStatus = document.getElementById("session-status");
+  const sessionBanner = document.getElementById("sessionBanner");
+
+  const publicKeyBox = document.getElementById("public-key");
+  const friendKeyBox = document.getElementById("friend-key");
+  const sessionKeyBox = document.getElementById("session-key");
+
+  const generateBtn = document.getElementById("generate-btn");
+  const friendBtn = document.getElementById("friend-btn");
+  const sessionBtn = document.getElementById("session-btn");
+  const sendBtn = document.getElementById("send-btn");
+  const messageInput = document.getElementById("message-input");
+  const chatBox = document.getElementById("chat-messages");
+  const securityModeSelect = document.getElementById("securityMode");
+  const modeSelect = document.getElementById("modeSelect");
+
+  // -------- Utils --------
+  function updateStatus(text, colorClass = "connected") {
+      connectionDot.className = "status-dot " + colorClass;
+      connectionStatus.textContent = "Connection: " + text;
+  }
+
+      function updateBanner(active, text) {
+      if (active) {
+          sessionBanner.style.background =
+          mode === "qkd"
+              ? "linear-gradient(90deg, #00b4d8, #4361ee)"
+              : "linear-gradient(90deg, #b5179e, #7209b7)";
+          sessionBanner.textContent = "🔐 " + text;
+          sessionBanner.classList.add("active");
+
+          // 🔊 Sound + flash effect
+          playSound("connect");
+          sessionBanner.animate(
+          [
+              { opacity: 0.5, transform: "scale(0.95)" },
+              { opacity: 1, transform: "scale(1.05)" },
+              { opacity: 1, transform: "scale(1)" },
+          ],
+          { duration: 1200, easing: "ease-out" }
+          );
+      } else {
+          sessionBanner.style.background =
+          "linear-gradient(90deg, #e63946, #ff6b6b)";
+          sessionBanner.textContent = text || "🔒 Secure Session Not Active";
+          sessionBanner.classList.remove("active");
+          playSound("disconnect");
+      }
+  }
+
+
+      // ---- Floating Mode Indicator Logic ----
+     function updateModeIndicator() {
+      const el = document.getElementById("modeIndicator");
+      if (!el) return;
+
+      if (mode === "qkd") {
+          el.classList.remove("active-hybrid");
+          el.classList.add("active-qkd");
+          el.innerHTML = `Mode: <span id="modeIndicatorText">QKD + AES</span> 🔵`;
+      } else {
+          el.classList.remove("active-qkd");
+          el.classList.add("active-hybrid");
+          el.innerHTML = `Mode: <span id="modeIndicatorText">Hybrid PQC-Kyber + AES</span> 🟣`;
+      }
+
+      el.animate(
+          [
+          { transform: "scale(1)", opacity: 1 },
+          { transform: "scale(1.1)", opacity: 0.8 },
+          { transform: "scale(1)", opacity: 1 },
+          ],
+          { duration: 600, easing: "ease-out" }
+      );
+  }
+
+
+
+  function copyToClipboard(elementId) {
+      const el = document.getElementById(elementId);
+      const text = el.textContent.trim();
+      if (!text) return;
+      navigator.clipboard.writeText(text);
+  }
+
+  function handleKeyPress(e) {
+      if (e.key === "Enter") {
+          e.preventDefault();
+          sendMessage();
+      }
+  }
+
+  function resetApplication() {
+      window.location.reload();
+  }
+
+  // -------- Socket events --------
+  socket.on("connect", () => updateStatus("Connected", "connected"));
+  socket.on("disconnect", () => updateStatus("Disconnected", "disconnected"));
+
+ async function ensureRegistered() {
+  if (username && myPubB64) return;
+
+  // ✅ Try reading from localStorage
+  username = localStorage.getItem("cryptexq_username");
+
+  if (!username) {
+      // fallback for direct link access
+      username = prompt("Enter your username to continue:");
+      if (!username) return;
+      localStorage.setItem("cryptexq_username", username);
+  }
+  if (window.updateSidebarUser) window.updateSidebarUser();
+
+// proceed with ECDH keygen
+
+
+  await new Promise(r => requestAnimationFrame(r)); // ensures gesture unlock
+
+  const kp = await crypto.subtle.generateKey(
+      { name: "ECDH", namedCurve: "P-256" },
+      true,
+      ["deriveKey", "deriveBits"]
+  );
+  window.ecdhKeyPair = kp;
+
+  const pubRaw = await crypto.subtle.exportKey("raw", kp.publicKey);
+  myPubB64 = btoa(String.fromCharCode(...new Uint8Array(pubRaw)));
+  publicKeyBox.textContent = myPubB64;
+
+  const copyBtn = document.querySelector("#public-key .copy-btn");
+  if (copyBtn) copyBtn.style.display = "inline-block";
+
+  socket.emit("register", { username, x25519_pub_b64: myPubB64 });
+}
+
+
+
+  socket.on("registered", data => {
+      sessionStatus.textContent = `✅ Registered as ${data.username}`;
+      updateStatus("Online", "connected");
+  });
+  // ------------------- ONLINE USERS HANDLING -------------------
+// ------------------- ONLINE USERS HANDLING (AUTO SESSION) -------------------
+socket.on("online_users", data => {
+console.log("[online_users]", data);
+const list = data.users.filter(u => u !== username);
+
+if (list.length > 0) {
+  peer = list[0];
+  friendKeyBox.textContent = "Connected to: " + peer;
+  friendBtn.disabled = false;
+  sessionBtn.disabled = false;
+
+  // Automatically start session if user chose auto-establish
+  const auto = document.getElementById("auto-establish");
+  if (auto && auto.checked && !aesKey) {
+    console.log("[auto] establishing session with", peer, "in mode", mode);
+    sessionKeyBox.textContent = "Negotiating secure session via " +
+      (mode === "qkd" ? "QKD" : "Hybrid Kyber") + "...";
+    if (mode === "qkd") {
+      socket.emit("start_qkd_session", { from: username, to: peer });
+    } else {
+      socket.emit("request_start_session", { from: username, to: peer });
+    }
+  }
+
+} else {
+  friendKeyBox.textContent = "Waiting for friend to connect...";
+  friendBtn.disabled = true;
+  sessionBtn.disabled = true;
+  peer = null;
+}
+});
+
+// ------------------- ONLINE CONTACTS LIST (additive UI) -------------------
+socket.on("online_users", data => {
+  const listEl = document.getElementById("online-users");
+  if (!listEl) return;
+  const peers = (data.users || []).filter(u => u !== username);
+  const youRow = `<div class="online-user"><span class="online-user__dot online-user__dot--you"></span><span>${username || "You"}</span><span class="tag">you</span></div>`;
+  if (peers.length > 0) {
+    const peerRows = peers.map(p =>
+      `<div class="online-user"><span class="online-user__dot online-user__dot--peer"></span><span>${p}</span><span class="tag tag--peer">online</span></div>`
+    ).join("");
+    listEl.innerHTML = youRow + peerRows;
+  } else {
+    listEl.innerHTML = youRow +
+      `<div class="online-user online-user--dim"><span class="online-user__dot online-user__dot--off"></span><span>No peers online yet — open the talkroom on a second device</span></div>`;
+  }
+});
+
+
+  // -------- Mode handling --------
+      function syncModeUI() {
+      securityModeSelect.value = mode;
+      modeSelect.value = mode;
+
+      const modeText =
+          mode === "qkd"
+          ? "QKD + AES mode active."
+          : "Hybrid PQC-Kyber + AES mode active.";
+
+      document.getElementById("modeStatus").textContent = modeText;
+
+      updateBanner(false, `Switched to ${modeText} (re-establish to apply)`);
+      updateModeIndicator(); // <-- 🟢 Add this line
+      }
+
+
+  function applyMode() {
+mode = securityModeSelect.value;
+syncModeUI();
+updateModeIndicator(); // 🟢 live update
+if (peer) startSession();
+}
+
+
+  securityModeSelect.addEventListener("change", () => {
+      mode = securityModeSelect.value;
+      syncModeUI();
+  });
+
+  modeSelect.addEventListener("change", () => {
+      mode = modeSelect.value;
+      syncModeUI();
+  });
+
+  // -------- Friend key modal (optional manual demo) --------
+  function showFriendKeyModal() {
+      document.getElementById("friend-key-modal").style.display = "flex";
+  }
+  function hideFriendKeyModal() {
+      document.getElementById("friend-key-modal").style.display = "none";
+  }
+  function saveFriendKey() {
+      const val = document.getElementById("friend-key-input").value.trim();
+      if (val) {
+          friendKeyBox.textContent = val;
+          sessionBtn.disabled = false;
+          hideFriendKeyModal();
+      }
+  }
+
+  // Make these functions available to inline HTML
+  window.showFriendKeyModal = showFriendKeyModal;
+  window.hideFriendKeyModal = hideFriendKeyModal;
+  window.saveFriendKey = saveFriendKey;
+  window.copyToClipboard = copyToClipboard;
+  window.switchTab = switchTab;
+  window.handleKeyPress = handleKeyPress;
+
+  // -------- Key generation & session --------
+  async function generateKeys() {
+      await ensureRegistered();
+      friendBtn.disabled = false;
+  }
+
+  function startSession() {
+      if (!peer) {
+          alert("No peer available yet. Open talkroom on another device/tab and register there.");
+          return;
+      }
+      sessionKeyBox.textContent = "Negotiating secure session via " + (mode === "qkd" ? "QKD" : "Hybrid Kyber") + "...";
+      if (mode === "qkd") {
+          socket.emit("start_qkd_session", { from: username, to: peer });
+      } else {
+          socket.emit("request_start_session", { from: username, to: peer });
+      }
+  }
+
+  socket.on("qkd_shared_key", async data => {
+      const raw = Uint8Array.from(atob(data.shared_b64), c => c.charCodeAt(0));
+      aesKey = await crypto.subtle.importKey("raw", raw, { name:"AES-GCM" }, false, ["encrypt","decrypt"]);
+      sessionKeyBox.textContent = "🔐 AES-256 Session Key (from QKD) – value hidden";
+      const copyBtn = document.querySelector("#session-key .copy-btn");
+      if (copyBtn) copyBtn.style.display = "none";
+
+      sendBtn.disabled = false;
+      messageInput.disabled = false;
+      updateBanner(true, "QKD-AES session active");
+      sessionStatus.textContent = "🔐 Session Active";
+  });
+
+  socket.on("kyber_shared_for_initiator", async data => {
+      const raw = Uint8Array.from(atob(data.kyber_ss_b64), c => c.charCodeAt(0));
+      aesKey = await crypto.subtle.importKey("raw", raw, { name:"AES-GCM" }, false, ["encrypt","decrypt"]);
+      sessionKeyBox.textContent = "🔐 AES-256 Session Key (from Kyber PQC) – value hidden";
+      const copyBtn = document.querySelector("#session-key .copy-btn");
+      if (copyBtn) copyBtn.style.display = "none";
+
+      sendBtn.disabled = false;
+      messageInput.disabled = false;
+      updateBanner(true, "Hybrid PQC-Kyber session active");
+      sessionStatus.textContent = "🔐 Hybrid PQC-Kyber session active";
+  });
+
+  socket.on("kyber_ready_peer", async data => {
+      const raw = Uint8Array.from(atob(data.kyber_ss_b64), c => c.charCodeAt(0));
+      aesKey = await crypto.subtle.importKey("raw", raw, { name:"AES-GCM" }, false, ["encrypt","decrypt"]);
+      sessionKeyBox.textContent = "🔐 AES-256 Session Key (from Kyber PQC) – value hidden";
+      const copyBtn = document.querySelector("#session-key .copy-btn");
+      if (copyBtn) copyBtn.style.display = "none";
+
+      sendBtn.disabled = false;
+      messageInput.disabled = false;
+      updateBanner(true, "Hybrid PQC-Kyber session active");
+      sessionStatus.textContent = "🔐 Hybrid PQC-Kyber session active";
+  });
+
+  // -------- Chat --------
+  async function sendMessage() {
+      if (!aesKey) return alert("No active session key!");
+      const msg = messageInput.value.trim();
+      if (!msg) return;
+
+        // 🟢  for demo clarity
+      console.log(`[mode] Encrypting using mode: ${mode}`);
+      console.log(`[key source] Using ${mode === 'qkd' ? 'Quantum-derived key' : mode === 'pqc' ? 'Kyber512 public key exchange' : 'Hybrid key mix'}`);
+
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const ctBuf = await crypto.subtle.encrypt(
+          { name:"AES-GCM", iv },
+          aesKey,
+          new TextEncoder().encode(msg)
+      );
+      const ctUint8 = new Uint8Array(ctBuf);
+      const ctB64 = btoa(String.fromCharCode(...ctUint8));
+      const ivB64 = btoa(String.fromCharCode(...iv));
+
+      if (document.getElementById("show-encrypted").checked) {
+          console.log("Ciphertext (b64):", ctB64);
+          console.log("IV (b64):", ivB64);
+      }
+
+      socket.emit("send_encrypted_message", {
+          from: username,
+          to: peer,
+          ciphertext_b64: ctB64,
+          iv_b64: ivB64
+      });
+      addMessage("You", msg);
+      messageInput.value = "";
+  }
+
+  socket.on("new_encrypted_message", async data => {
+      if (!aesKey) {
+          console.warn("Received encrypted message but no AES key yet");
+          return;
+      }
+      const ct = Uint8Array.from(atob(data.ciphertext_b64), c => c.charCodeAt(0));
+      const iv = Uint8Array.from(atob(data.iv_b64), c => c.charCodeAt(0));
+      const ptBuf = await crypto.subtle.decrypt(
+          { name:"AES-GCM", iv },
+          aesKey,
+          ct
+      );
+      const msg = new TextDecoder().decode(ptBuf);
+      addMessage(data.from, msg);
+  });
+
+  function addMessage(sender, text) {
+      const es = document.getElementById("chatEmptyState");
+      if (es) es.remove();
+      const div = document.createElement("div");
+      div.className = "message " + (sender === "You" ? "sent" : "received");
+      div.innerHTML = `<strong>${sender}:</strong> ${text}`;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  // -------- Init --------
+  window.addEventListener("DOMContentLoaded", () => {
+      syncModeUI();
+      function updateSidebarUser() {
+        const un = username || localStorage.getItem("cryptexq_username") || "Local user";
+        const nameEl = document.getElementById("sidebar-user-name");
+        const avEl = document.getElementById("sidebar-user-avatar");
+        if (nameEl) nameEl.textContent = un;
+        if (avEl) avEl.textContent = un.slice(0, 2).toUpperCase();
+      }
+      window.updateSidebarUser = updateSidebarUser;
+      updateSidebarUser();
+      generateBtn.onclick = generateKeys;
+      friendBtn.onclick = showFriendKeyModal;
+      sessionBtn.onclick = startSession;
+      document.getElementById("start-btn").onclick = startSession;
+      sendBtn.onclick = sendMessage;
+      messageInput.addEventListener("keypress", handleKeyPress);
+      document.getElementById("applyModeBtn").onclick = applyMode;
+      document.getElementById("reset-btn").onclick = resetApplication;
+  });
+  // Optional: subtle sound cues for connection/mode change
+      function playSound(type) {
+      const soundUrl =
+          type === "connect"
+          ? "https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3"
+          : "https://assets.mixkit.co/sfx/preview/mixkit-system-beep-buzzer-fail-2964.mp3";
+      new Audio(soundUrl).play();
+      }
+  </script>
+
+</body>
+</html>

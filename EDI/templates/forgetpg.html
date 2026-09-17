@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Forgot Password — ThreatX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/threatx.css') }}">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a href="{{ url_for('index_page') }}" class="brand">
+      <span class="brand__mark"><i class="fa-solid fa-lock"></i></span>
+      <span class="brand__name">Threat<span>X</span></span>
+    </a>
+    <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+    <nav class="nav__menu" id="navMenu">
+      <a href="{{ url_for('index_page') }}" class="nav__link"><i class="fa-solid fa-house"></i>Home</a>
+      <a href="{{ url_for('home_page') }}" class="nav__link"><i class="fa-solid fa-table-columns"></i>Dashboard</a>
+      <div class="nav-dropdown">
+        <a href="{{ url_for('talkroom_page') }}" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-comments"></i>Chat <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('talkroom_page') }}"><i class="fa-solid fa-door-open"></i>Talkroom</a>
+          <a href="{{ url_for('demo_page') }}"><i class="fa-solid fa-flask"></i>Encryption Demo</a>
+        </div>
+      </div>
+      <a href="{{ url_for('team_page') }}" class="nav__link"><i class="fa-solid fa-users"></i>Team</a>
+      <a href="{{ url_for('faq_page') }}" class="nav__link"><i class="fa-solid fa-circle-question"></i>FAQ</a>
+      <div class="nav-dropdown">
+        <a href="#" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-scale-balanced"></i>Legal <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('terms_page') }}"><i class="fa-solid fa-file-contract"></i>Terms</a>
+          <a href="{{ url_for('about_page') }}"><i class="fa-solid fa-circle-info"></i>About</a>
+        </div>
+      </div>
+      <a href="{{ url_for('contact_page') }}" class="nav__link"><i class="fa-solid fa-envelope"></i>Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="{{ url_for('login_route') }}" class="btn btn--ghost">Log in</a>
+      <a href="{{ url_for('signup_route') }}" class="btn btn--primary">Sign up</a>
+    </div>
+  </div>
+</header>
+
+<main class="auth auth--alone">
+  <div class="auth-card">
+    <div class="auth-card__head">
+      <span class="eyebrow">Account recovery</span>
+      <h2>Reset your password</h2>
+      <p>Enter your registered email and we will send you a secure reset link.</p>
+    </div>
+    <form onsubmit="return sendReset(event)">
+      <div class="field">
+        <label for="email">Enter your registered email</label>
+        <input class="input" type="email" id="email" placeholder="example@email.com" required>
+      </div>
+      <button type="submit" class="btn btn--primary btn--block">Send reset link</button>
+      <p class="msg" id="msg" style="display:none; text-align:center; color: var(--ok); margin-top: 16px; font-size: 0.9rem;">Password reset link sent to your email!</p>
+    </form>
+    <div class="auth-links">
+      <p>Remembered it? <a href="{{ url_for('login_route') }}">Back to log in</a></p>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  © ThreatX — Post-quantum secure communication
+</footer>
+
+<script src="{{ url_for('static', filename='js/threatx.js') }}"></script>
+<script>
+function sendReset(e) {
+  e.preventDefault();
+  document.getElementById("msg").style.display = "block";
+}
+</script>
+
+</body>
+</html>

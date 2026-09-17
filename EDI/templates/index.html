@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ThreatX: Quantum-Resistant Secure Communication Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/threatx.css') }}">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a href="{{ url_for('index_page') }}" class="brand">
+      <span class="brand__mark"><i class="fa-solid fa-lock"></i></span>
+      <span class="brand__name">Threat<span>X</span></span>
+    </a>
+    <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+    <nav class="nav__menu" id="navMenu">
+      <a href="{{ url_for('index_page') }}" class="nav__link is-active"><i class="fa-solid fa-house"></i>Home</a>
+      <a href="{{ url_for('home_page') }}" class="nav__link"><i class="fa-solid fa-table-columns"></i>Dashboard</a>
+      <div class="nav-dropdown">
+        <a href="{{ url_for('talkroom_page') }}" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-comments"></i>Chat <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('talkroom_page') }}"><i class="fa-solid fa-door-open"></i>Talkroom</a>
+          <a href="{{ url_for('demo_page') }}"><i class="fa-solid fa-flask"></i>Encryption Demo</a>
+          <a href="{{ url_for('profile_page') }}"><i class="fa-solid fa-user"></i>Profile</a>
+        </div>
+      </div>
+      <a href="{{ url_for('team_page') }}" class="nav__link"><i class="fa-solid fa-users"></i>Team</a>
+      <a href="{{ url_for('faq_page') }}" class="nav__link"><i class="fa-solid fa-circle-question"></i>FAQ</a>
+      <div class="nav-dropdown">
+        <a href="#" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-scale-balanced"></i>Legal <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('terms_page') }}"><i class="fa-solid fa-file-contract"></i>Terms</a>
+          <a href="{{ url_for('about_page') }}"><i class="fa-solid fa-circle-info"></i>About</a>
+        </div>
+      </div>
+      <a href="{{ url_for('contact_page') }}" class="nav__link"><i class="fa-solid fa-envelope"></i>Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="{{ url_for('login_route') }}" class="btn btn--ghost">Log in</a>
+      <a href="{{ url_for('signup_route') }}" class="btn btn--primary">Sign up</a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- Hero -->
+  <section id="home" class="hero-landing">
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-landing__inner">
+      <span class="eyebrow">Post-quantum secure communication</span>
+      <h1>Quantum-safe messaging <span class="grad">for the future</span></h1>
+      <p>
+        ThreatX protects private communication with Quantum Key Distribution (BB84),
+        post-quantum Kyber512, and AES-256-GCM — hardened against today's threats
+        and tomorrow's quantum computers.
+      </p>
+      <div class="hero-landing__cta">
+        <a href="{{ url_for('demo_page') }}" class="btn btn--primary">
+          <i class="fa-solid fa-flask-vial"></i>Try the Demo
+        </a>
+        <a href="#how-it-works" class="btn btn--ghost">
+          <i class="fa-solid fa-arrow-down"></i>Learn More
+        </a>
+      </div>
+      <div class="hero-landing__meta">
+        <span class="badge badge--accent">AES-256-GCM</span>
+        <span class="badge badge--violet">Kyber512 PQC</span>
+        <span class="badge badge--ok">BB84 QKD</span>
+        <span class="badge">E2E Encrypted</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it Works -->
+  <section id="how-it-works" class="section-block">
+    <div class="container">
+      <div class="center">
+        <span class="eyebrow">Architecture</span>
+        <h2 class="section-title">How ThreatX works</h2>
+        <p class="lead" style="margin: 0 auto;">
+          Quantum bits are generated via QKD simulation, messages are sealed with
+          quantum-safe keys, and only the intended recipient can unlock them.
+        </p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-card__icon"><i class="fa-solid fa-key"></i></div>
+          <h3>Key generation</h3>
+          <p>Shared quantum keys are derived using the BB84 QKD protocol, ensuring true randomness at the source.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-card__icon"><i class="fa-solid fa-shield"></i></div>
+          <h3>Encryption</h3>
+          <p>Messages are encrypted with AES-256-GCM using keys exchanged through quantum-safe channels.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-card__icon"><i class="fa-solid fa-satellite-dish"></i></div>
+          <h3>Secure transmission</h3>
+          <p>Ciphertext travels over an encrypted connection with no feasibility of eavesdropping.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-card__icon"><i class="fa-solid fa-unlock-keyhole"></i></div>
+          <h3>Decryption</h3>
+          <p>The recipient uses the matching quantum key to recover the original plaintext message.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why ThreatX -->
+  <section id="why" class="section-block section-block--alt">
+    <div class="container">
+      <div class="center">
+        <span class="eyebrow">Future-proof security</span>
+        <h2 class="section-title">Why ThreatX?</h2>
+        <p class="lead" style="margin: 0 auto;">
+          Classical encryption like RSA and AES alone may fall to future quantum computers.
+          ThreatX pairs <strong>BB84 quantum key distribution</strong> with
+          <strong>post-quantum cryptography</strong> to stay ahead.
+        </p>
+      </div>
+      <div style="display:flex; justify-content:center;">
+        <ul class="check-list">
+          <li><i class="fa-solid fa-circle-check"></i>Quantum Key Distribution (QKD) key exchange</li>
+          <li><i class="fa-solid fa-circle-check"></i>End-to-end encrypted messages</li>
+          <li><i class="fa-solid fa-circle-check"></i>Protection from man-in-the-middle attacks</li>
+          <li><i class="fa-solid fa-circle-check"></i>Educational demo plus real-world application</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to Use -->
+  <section id="how-to" class="section-block">
+    <div class="container">
+      <div class="center">
+        <span class="eyebrow">Getting started</span>
+        <h2 class="section-title">How to use ThreatX</h2>
+        <p class="lead" style="margin: 0 auto;">Getting started takes four simple steps.</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-card__icon"><i class="fa-solid fa-user-plus"></i></div>
+          <h3>Step 1 · Create account</h3>
+          <p>Register a username and generate your personal key material.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-card__icon"><i class="fa-solid fa-key"></i></div>
+          <h3>Step 2 · Share key</h3>
+          <p>Exchange your public key with a contact using secure QKD protocols.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-card__icon"><i class="fa-solid fa-paper-plane"></i></div>
+          <h3>Step 3 · Send message</h3>
+          <p>Type your message — it is encrypted with the shared session key instantly.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-card__icon"><i class="fa-solid fa-shield-halved"></i></div>
+          <h3>Step 4 · Decrypt</h3>
+          <p>The recipient uses the same key to decrypt and read the original message.</p>
+        </div>
+      </div>
+      <div class="mt-4 center">
+        <a href="{{ url_for('login_route') }}" class="btn btn--primary"><i class="fa-solid fa-right-to-bracket"></i>Start messaging</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="contact" class="site-footer">
+  © ThreatX — Post-quantum secure communication
+</footer>
+
+<script>
+  // Hero particle/network animation (visual layer only)
+  const canvas = document.getElementById('heroCanvas');
+  const ctx = canvas.getContext('2d');
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+
+  class Node {
+    constructor() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+      this.vx = (Math.random() - 0.5) * 0.4;
+      this.vy = (Math.random() - 0.5) * 0.4;
+      this.radius = Math.random() * 1.6 + 0.8;
+    }
+    move() {
+      this.x += this.vx; this.y += this.vy;
+      if (this.x < 0 || this.x > width) this.vx *= -1;
+      if (this.y < 0 || this.y > height) this.vy *= -1;
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(25,198,208,0.5)";
+      ctx.fill();
+    }
+  }
+
+  const nodes = [];
+  const numNodes = Math.min(90, Math.floor(window.innerWidth / 16));
+  for (let i = 0; i < numNodes; i++) nodes.push(new Node());
+
+  function animate() {
+    ctx.clearRect(0, 0, width, height);
+    for (let i = 0; i < numNodes; i++) {
+      nodes[i].move();
+      nodes[i].draw();
+      for (let j = i + 1; j < numNodes; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 130) {
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.strokeStyle = "rgba(25,198,208," + (1 - dist / 130) * 0.22 + ")";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+</script>
+<script src="{{ url_for('static', filename='js/threatx.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>About — ThreatX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/threatx.css') }}">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a href="{{ url_for('index_page') }}" class="brand">
+      <span class="brand__mark"><i class="fa-solid fa-lock"></i></span>
+      <span class="brand__name">Threat<span>X</span></span>
+    </a>
+    <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+    <nav class="nav__menu" id="navMenu">
+      <a href="{{ url_for('index_page') }}" class="nav__link"><i class="fa-solid fa-house"></i>Home</a>
+      <a href="{{ url_for('home_page') }}" class="nav__link"><i class="fa-solid fa-table-columns"></i>Dashboard</a>
+      <div class="nav-dropdown">
+        <a href="{{ url_for('talkroom_page') }}" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-comments"></i>Chat <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('talkroom_page') }}"><i class="fa-solid fa-door-open"></i>Talkroom</a>
+          <a href="{{ url_for('demo_page') }}"><i class="fa-solid fa-flask"></i>Encryption Demo</a>
+        </div>
+      </div>
+      <a href="{{ url_for('team_page') }}" class="nav__link"><i class="fa-solid fa-users"></i>Team</a>
+      <a href="{{ url_for('faq_page') }}" class="nav__link"><i class="fa-solid fa-circle-question"></i>FAQ</a>
+      <div class="nav-dropdown">
+        <a href="#" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-scale-balanced"></i>Legal <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('terms_page') }}"><i class="fa-solid fa-file-contract"></i>Terms</a>
+          <a href="{{ url_for('about_page') }}"><i class="fa-solid fa-circle-info"></i>About</a>
+        </div>
+      </div>
+      <a href="{{ url_for('contact_page') }}" class="nav__link"><i class="fa-solid fa-envelope"></i>Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="{{ url_for('login_route') }}" class="btn btn--ghost">Log in</a>
+      <a href="{{ url_for('signup_route') }}" class="btn btn--primary">Sign up</a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="container">
+    <div class="page-hero">
+      <span class="eyebrow">The project</span>
+      <h1>About ThreatX</h1>
+      <p class="lead">ThreatX is an academic project that simulates Quantum Key Distribution (QKD) with AES-GCM encryption. It demonstrates how secure communication can be achieved using quantum principles without real quantum hardware.</p>
+    </div>
+
+    <div class="about-split">
+      <div class="card">
+        <h2 class="card__title">Scope</h2>
+        <ul class="article" style="list-style: none; padding: 0; margin: 0;">
+          <li><i class="fa-solid fa-circle-check" style="color: var(--ok); margin-right: 8px;"></i>Secure text messaging using simulated QKD.</li>
+          <li><i class="fa-solid fa-circle-check" style="color: var(--ok); margin-right: 8px;"></i>Interactive educational experiments for students and enthusiasts.</li>
+          <li><i class="fa-solid fa-circle-check" style="color: var(--ok); margin-right: 8px;"></i>Visualization of qubit generation, basis selection, and measurement.</li>
+          <li><i class="fa-solid fa-circle-check" style="color: var(--ok); margin-right: 8px;"></i>Support for workshops, seminars, and classroom learning.</li>
+          <li><i class="fa-solid fa-circle-check" style="color: var(--ok); margin-right: 8px;"></i>Foundation for future extension to PQC or real QKD hardware integration.</li>
+        </ul>
+
+        <h2 class="card__title" style="margin-top: 24px;">Objectives</h2>
+        <ul class="article" style="list-style: none; padding: 0; margin: 0;">
+          <li><i class="fa-solid fa-circle-check" style="color: var(--ok); margin-right: 8px;"></i>Simulate the BB84 QKD protocol step-by-step.</li>
+          <li><i class="fa-solid fa-circle-check" style="color: var(--ok); margin-right: 8px;"></i>Generate symmetric keys for secure encryption.</li>
+          <li><i class="fa-solid fa-circle-check" style="color: var(--ok); margin-right: 8px;"></i>Encrypt and decrypt messages using AES-GCM.</li>
+          <li><i class="fa-solid fa-circle-check" style="color: var(--ok); margin-right: 8px;"></i>Provide an interactive and educational interface.</li>
+          <li><i class="fa-solid fa-circle-check" style="color: var(--ok); margin-right: 8px;"></i>Bridge theory with hands-on experimentation.</li>
+        </ul>
+      </div>
+
+      <aside class="tech-viz">
+        <div class="tech-viz__head">
+          <i class="fa-solid fa-microchip"></i>
+          Tech stack
+        </div>
+        <div class="tech-viz__list">
+          <div class="tech-viz__row"><i class="fa-brands fa-python"></i>Flask backend<span class="mono">Python</span></div>
+          <div class="tech-viz__row"><i class="fa-solid fa-bolt"></i>Socket.IO<span class="mono">Real-time</span></div>
+          <div class="tech-viz__row"><i class="fa-solid fa-atom"></i>BB84 QKD<span class="mono">Simulated</span></div>
+          <div class="tech-viz__row"><i class="fa-solid fa-key"></i>Kyber512<span class="mono">Post-quantum</span></div>
+          <div class="tech-viz__row"><i class="fa-solid fa-lock"></i>AES-256-GCM<span class="mono">Data</span></div>
+          <div class="tech-viz__row"><i class="fa-solid fa-database"></i>MongoDB<span class="mono">Storage</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  © ThreatX — Post-quantum secure communication
+</footer>
+
+<script src="{{ url_for('static', filename='js/threatx.js') }}"></script>
+
+</body>
+</html>

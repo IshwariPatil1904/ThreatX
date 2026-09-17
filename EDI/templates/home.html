@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard — ThreatX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/threatx.css') }}">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a href="{{ url_for('index_page') }}" class="brand">
+      <span class="brand__mark"><i class="fa-solid fa-lock"></i></span>
+      <span class="brand__name">Threat<span>X</span></span>
+    </a>
+    <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+    <nav class="nav__menu" id="navMenu">
+      <a href="{{ url_for('index_page') }}" class="nav__link"><i class="fa-solid fa-house"></i>Home</a>
+      <a href="{{ url_for('home_page') }}" class="nav__link is-active"><i class="fa-solid fa-table-columns"></i>Dashboard</a>
+      <div class="nav-dropdown">
+        <a href="{{ url_for('talkroom_page') }}" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-comments"></i>Chat <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('talkroom_page') }}"><i class="fa-solid fa-door-open"></i>Talkroom</a>
+          <a href="{{ url_for('demo_page') }}"><i class="fa-solid fa-flask"></i>Encryption Demo</a>
+        </div>
+      </div>
+      <a href="{{ url_for('team_page') }}" class="nav__link"><i class="fa-solid fa-users"></i>Team</a>
+      <a href="{{ url_for('faq_page') }}" class="nav__link"><i class="fa-solid fa-circle-question"></i>FAQ</a>
+      <div class="nav-dropdown">
+        <a href="#" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-scale-balanced"></i>Legal <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('terms_page') }}"><i class="fa-solid fa-file-contract"></i>Terms</a>
+          <a href="{{ url_for('about_page') }}"><i class="fa-solid fa-circle-info"></i>About</a>
+        </div>
+      </div>
+      <a href="{{ url_for('contact_page') }}" class="nav__link"><i class="fa-solid fa-envelope"></i>Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="{{ url_for('login_route') }}" class="btn btn--ghost"><i class="fa-solid fa-right-to-bracket"></i>Log in</a>
+      <a href="{{ url_for('signup_route') }}" class="btn btn--primary"><i class="fa-solid fa-user-plus"></i>Sign up</a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <section class="hub-hero">
+    <div class="container">
+      <span class="eyebrow">ThreatX secure chat platform</span>
+      <h1 class="section-title">Control center</h1>
+      <p class="lead">Everything you need — quantum-safe messaging, encryption demos, and account tools — in one place.</p>
+    </div>
+  </section>
+
+  <section class="container mb-3">
+    <div class="hub-grid">
+
+      <a href="{{ url_for('talkroom_page') }}" class="hub-card" style="text-decoration: none;">
+        <span class="hub-card__icon"><i class="fa-solid fa-door-open"></i></span>
+        <div>
+          <h3>Talk Rooms</h3>
+          <p>Open the real-time, quantum-encrypted chat with key exchange.</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('demo_page') }}" class="hub-card" style="text-decoration: none;">
+        <span class="hub-card__icon"><i class="fa-solid fa-play-circle"></i></span>
+        <div>
+          <h3>Encryption Demo</h3>
+          <p>See keys, sessions, encrypted messages, and decryption live.</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('contact_page') }}" class="hub-card" style="text-decoration: none;">
+        <span class="hub-card__icon"><i class="fa-solid fa-envelope"></i></span>
+        <div>
+          <h3>Contact</h3>
+          <p>Get in touch with the ThreatX team.</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('profile_page') }}" class="hub-card" style="text-decoration: none;">
+        <span class="hub-card__icon"><i class="fa-solid fa-user"></i></span>
+        <div>
+          <h3>Profile</h3>
+          <p>Manage your avatar and account details.</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('team_page') }}" class="hub-card" style="text-decoration: none;">
+        <span class="hub-card__icon"><i class="fa-solid fa-users"></i></span>
+        <div>
+          <h3>Team</h3>
+          <p>Meet the team behind ThreatX.</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('faq_page') }}" class="hub-card" style="text-decoration: none;">
+        <span class="hub-card__icon"><i class="fa-solid fa-circle-question"></i></span>
+        <div>
+          <h3>FAQ</h3>
+          <p>Answers to common questions about quantum-safe messaging.</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('terms_page') }}" class="hub-card" style="text-decoration: none;">
+        <span class="hub-card__icon"><i class="fa-solid fa-file-contract"></i></span>
+        <div>
+          <h3>Terms of Service</h3>
+          <p>Read the terms that govern your use of ThreatX.</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('about_page') }}" class="hub-card" style="text-decoration: none;">
+        <span class="hub-card__icon"><i class="fa-solid fa-circle-info"></i></span>
+        <div>
+          <h3>About</h3>
+          <p>How ThreatX protects communication with quantum cryptography.</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('login_route') }}" class="hub-card" style="text-decoration: none;">
+        <span class="hub-card__icon"><i class="fa-solid fa-right-to-bracket"></i></span>
+        <div>
+          <h3>Login</h3>
+          <p>Sign in to your account to start a secure session.</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('signup_route') }}" class="hub-card" style="text-decoration: none;">
+        <span class="hub-card__icon"><i class="fa-solid fa-user-plus"></i></span>
+        <div>
+          <h3>Sign Up</h3>
+          <p>Create an account and get your keys prepared.</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('forgetpg_page') }}" class="hub-card" style="text-decoration: none;">
+        <span class="hub-card__icon"><i class="fa-solid fa-key"></i></span>
+        <div>
+          <h3>Forgot Password</h3>
+          <p>Request a password reset link for your account.</p>
+        </div>
+      </a>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  © ThreatX — Post-quantum secure communication
+</footer>
+
+<script src="{{ url_for('static', filename='js/threatx.js') }}"></script>
+
+</body>
+</html>

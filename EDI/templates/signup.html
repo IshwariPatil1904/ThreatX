@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign up — ThreatX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/threatx.css') }}">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a href="{{ url_for('index_page') }}" class="brand">
+      <span class="brand__mark"><i class="fa-solid fa-lock"></i></span>
+      <span class="brand__name">Threat<span>X</span></span>
+    </a>
+    <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+    <nav class="nav__menu" id="navMenu">
+      <a href="{{ url_for('index_page') }}" class="nav__link"><i class="fa-solid fa-house"></i>Home</a>
+      <a href="{{ url_for('home_page') }}" class="nav__link"><i class="fa-solid fa-table-columns"></i>Dashboard</a>
+      <div class="nav-dropdown">
+        <a href="{{ url_for('talkroom_page') }}" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-comments"></i>Chat <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('talkroom_page') }}"><i class="fa-solid fa-door-open"></i>Talkroom</a>
+          <a href="{{ url_for('demo_page') }}"><i class="fa-solid fa-flask"></i>Encryption Demo</a>
+        </div>
+      </div>
+      <a href="{{ url_for('team_page') }}" class="nav__link"><i class="fa-solid fa-users"></i>Team</a>
+      <a href="{{ url_for('faq_page') }}" class="nav__link"><i class="fa-solid fa-circle-question"></i>FAQ</a>
+      <div class="nav-dropdown">
+        <a href="#" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-scale-balanced"></i>Legal <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('terms_page') }}"><i class="fa-solid fa-file-contract"></i>Terms</a>
+          <a href="{{ url_for('about_page') }}"><i class="fa-solid fa-circle-info"></i>About</a>
+        </div>
+      </div>
+      <a href="{{ url_for('contact_page') }}" class="nav__link"><i class="fa-solid fa-envelope"></i>Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="{{ url_for('login_route') }}" class="btn btn--ghost">Log in</a>
+    </div>
+  </div>
+</header>
+
+<main class="auth">
+  <div class="auth-brand">
+    <span class="eyebrow">Begin secure</span>
+    <h1>Create your account</h1>
+    <p class="lead">Join ThreatX and send messages immune to quantum attacks.</p>
+    <div class="auth-stack">
+      <div class="auth-feature">
+        <div class="auth-feature__icon"><i class="fa-solid fa-key"></i></div>
+        <div>
+          <h3>Your keys, your control</h3>
+          <p>Quantum-derived session keys are exchanged automatically.</p>
+        </div>
+      </div>
+      <div class="auth-feature">
+        <div class="auth-feature__icon"><i class="fa-solid fa-lock"></i></div>
+        <div>
+          <h3>Encrypted conversations</h3>
+          <p>Every message is sealed before it leaves your device.</p>
+        </div>
+      </div>
+      <div class="auth-feature">
+        <div class="auth-feature__icon"><i class="fa-solid fa-bolt"></i></div>
+        <div>
+          <h3>Instant setup</h3>
+          <p>Create an account in seconds and start chatting.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-card">
+    <div class="auth-card__head">
+      <span class="eyebrow">Account</span>
+      <h2>Sign up</h2>
+      <p>Fill in the details below to get started.</p>
+    </div>
+    <form id="signupForm">
+      <div class="field">
+        <label for="username">Username</label>
+        <input class="input" type="text" id="username" placeholder="Choose a username" required>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input class="input" type="email" id="email" placeholder="Enter your email" required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input class="input" type="password" id="password" placeholder="Enter your password" required>
+      </div>
+      <div class="field">
+        <label for="confirmpassword">Confirm Password</label>
+        <input class="input" type="password" id="confirmpassword" placeholder="Confirm your password" required>
+      </div>
+      <button type="submit" class="btn btn--primary btn--block">Create account</button>
+      <div class="auth-links">
+        <p>Already have an account? <a href="{{ url_for('login_route') }}">Log in</a></p>
+      </div>
+    </form>
+  </div>
+</main>
+
+<footer class="site-footer">
+  © ThreatX — Post-quantum secure communication
+</footer>
+
+<script src="{{ url_for('static', filename='js/threatx.js') }}"></script>
+<script>
+document.getElementById("signupForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const username = document.getElementById("username").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const confirm = document.getElementById("confirmpassword").value.trim();
+
+  if (password !== confirm) {
+    alert("Passwords do not match!");
+    return;
+  }
+
+  try {
+    const response = await fetch("/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, email, password }),
+    });
+
+    const result = await response.json();
+    if (response.ok && result.success) {
+      alert("Signup successful! Redirecting to login...");
+      window.location.href = "/login";
+    } else {
+      alert(result.message || "Signup failed!");
+    }
+  } catch (err) {
+    alert("Server not reachable!");
+  }
+});
+</script>
+
+</body>
+</html>

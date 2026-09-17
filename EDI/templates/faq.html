@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FAQ — ThreatX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/threatx.css') }}">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a href="{{ url_for('index_page') }}" class="brand">
+      <span class="brand__mark"><i class="fa-solid fa-lock"></i></span>
+      <span class="brand__name">Threat<span>X</span></span>
+    </a>
+    <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+    <nav class="nav__menu" id="navMenu">
+      <a href="{{ url_for('index_page') }}" class="nav__link"><i class="fa-solid fa-house"></i>Home</a>
+      <a href="{{ url_for('home_page') }}" class="nav__link"><i class="fa-solid fa-table-columns"></i>Dashboard</a>
+      <div class="nav-dropdown">
+        <a href="{{ url_for('talkroom_page') }}" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-comments"></i>Chat <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('talkroom_page') }}"><i class="fa-solid fa-door-open"></i>Talkroom</a>
+          <a href="{{ url_for('demo_page') }}"><i class="fa-solid fa-flask"></i>Encryption Demo</a>
+        </div>
+      </div>
+      <a href="{{ url_for('team_page') }}" class="nav__link"><i class="fa-solid fa-users"></i>Team</a>
+      <a href="{{ url_for('faq_page') }}" class="nav__link is-active"><i class="fa-solid fa-circle-question"></i>FAQ</a>
+      <div class="nav-dropdown">
+        <a href="#" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-scale-balanced"></i>Legal <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('terms_page') }}"><i class="fa-solid fa-file-contract"></i>Terms</a>
+          <a href="{{ url_for('about_page') }}"><i class="fa-solid fa-circle-info"></i>About</a>
+        </div>
+      </div>
+      <a href="{{ url_for('contact_page') }}" class="nav__link"><i class="fa-solid fa-envelope"></i>Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="{{ url_for('login_route') }}" class="btn btn--ghost">Log in</a>
+      <a href="{{ url_for('signup_route') }}" class="btn btn--primary">Sign up</a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="container" style="max-width: 860px;">
+    <div class="page-hero">
+      <span class="eyebrow">Support</span>
+      <h1>Frequently asked questions</h1>
+      <p class="lead">Everything you need to know about ThreatX, quantum-safe messaging, and the BB84 behind it.</p>
+    </div>
+
+    <div class="card mt-3" style="padding: 10px 24px;">
+      <div class="faq-item">
+        <button class="faq-q faq-question">What is ThreatX?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">ThreatX is a secure quantum-safe messaging platform that combines Quantum Key Distribution (QKD) with AES-GCM encryption to ensure end-to-end privacy.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q faq-question">How does QKD work?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">QKD uses quantum mechanics (such as the BB84 protocol) to securely exchange cryptographic keys. Any attempt to eavesdrop alters the quantum states, alerting the users.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q faq-question">Is ThreatX unbreakable?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">While no system is 100% unbreakable, combining QKD with AES-GCM provides strong protection against both classical and quantum computer attacks.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q faq-question">Do I need special hardware to use ThreatX?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">Real-world QKD requires quantum hardware. However, ThreatX offers a simulation-based demo that works without special devices.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q faq-question">Can I access ThreatX on mobile?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">Yes. ThreatX's interface is fully responsive and works on desktops, tablets, and mobile devices.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q faq-question">What encryption algorithms are used?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">ThreatX primarily uses AES-256-GCM for message encryption and integrates keys exchanged securely using Quantum Key Distribution.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q faq-question">Is an internet connection required?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">Yes. ThreatX requires an active connection for sending messages and exchanging keys, though local simulations may work offline.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q faq-question">Who can use ThreatX?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">ThreatX is designed for researchers, students, cybersecurity enthusiasts, and organizations interested in quantum-safe communication.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q faq-question">Can someone eavesdrop on my messages?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">With QKD, any attempt to eavesdrop is detectable. Messages are also encrypted with AES-GCM, making unauthorized access extremely difficult.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q faq-question">What protocols are implemented?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">ThreatX supports the BB84 quantum key distribution protocol and uses standard AES-GCM for secure message encryption and authentication.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q faq-question">Is ThreatX faster than normal messaging apps?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">Quantum key generation can be slower than traditional methods, but once established, AES-GCM ensures fast and efficient message encryption/decryption.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q faq-question">Is ThreatX open-source?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">ThreatX is primarily a research project. Depending on licensing, parts of the code may be made available for academic and learning purposes.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q faq-question">Can ThreatX be scaled for global use?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">Yes. With the right quantum infrastructure and relay nodes, ThreatX can scale to support secure communication on a large scale.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q faq-question">Why is quantum safety important?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">Quantum computers will be able to break classical encryption methods in the future. ThreatX provides a future-proof approach to secure messaging.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q faq-question">How can I try the demo?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq-a faq-answer">You can explore the demo on our website under the "Demo" section. It simulates QKD and secure messaging without the need for specialized hardware.</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  © ThreatX — Post-quantum secure communication
+</footer>
+
+<script src="{{ url_for('static', filename='js/threatx.js') }}"></script>
+<script>
+// FAQ toggle logic
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const answer = btn.nextElementSibling;
+    answer.classList.toggle('open');
+    if (item) item.classList.toggle('is-open', answer.classList.contains('open'));
+  });
+});
+</script>
+
+</body>
+</html>

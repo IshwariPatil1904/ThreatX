@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encryption Demo — ThreatX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/threatx.css') }}">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a href="{{ url_for('index_page') }}" class="brand">
+      <span class="brand__mark"><i class="fa-solid fa-lock"></i></span>
+      <span class="brand__name">Threat<span>X</span></span>
+    </a>
+    <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+    <nav class="nav__menu" id="navMenu">
+      <a href="{{ url_for('index_page') }}" class="nav__link"><i class="fa-solid fa-house"></i>Home</a>
+      <a href="{{ url_for('home_page') }}" class="nav__link"><i class="fa-solid fa-table-columns"></i>Dashboard</a>
+      <div class="nav-dropdown">
+        <a href="{{ url_for('talkroom_page') }}" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-comments"></i>Chat <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('talkroom_page') }}"><i class="fa-solid fa-door-open"></i>Talkroom</a>
+          <a href="{{ url_for('demo_page') }}"><i class="fa-solid fa-flask"></i>Encryption Demo</a>
+        </div>
+      </div>
+      <a href="{{ url_for('team_page') }}" class="nav__link"><i class="fa-solid fa-users"></i>Team</a>
+      <a href="{{ url_for('faq_page') }}" class="nav__link"><i class="fa-solid fa-circle-question"></i>FAQ</a>
+      <div class="nav-dropdown">
+        <a href="#" class="nav__link nav-dropdown-trigger"><i class="fa-solid fa-scale-balanced"></i>Legal <i class="fa-solid fa-chevron-down"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="{{ url_for('terms_page') }}"><i class="fa-solid fa-file-contract"></i>Terms</a>
+          <a href="{{ url_for('about_page') }}"><i class="fa-solid fa-circle-info"></i>About</a>
+        </div>
+      </div>
+      <a href="{{ url_for('contact_page') }}" class="nav__link"><i class="fa-solid fa-envelope"></i>Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="{{ url_for('login_route') }}" class="btn btn--ghost">Log in</a>
+      <a href="{{ url_for('signup_route') }}" class="btn btn--primary">Sign up</a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="container">
+
+    <section class="demo-hero">
+      <span class="eyebrow">Interactive demo</span>
+      <h1>End-to-end encryption demo</h1>
+      <p>Experience how ThreatX securely exchanges keys and encrypts messages between users. Generate keys, exchange them, and send encrypted messages.</p>
+    </section>
+
+    <section class="process">
+      <h2>How encryption works</h2>
+      <div class="process-steps">
+        <div class="process-step">
+          <div class="step-number">1</div>
+          <h3>Generate keys</h3>
+          <p>Create your public and private key pair</p>
+        </div>
+        <div class="process-step">
+          <div class="step-number">2</div>
+          <h3>Exchange keys</h3>
+          <p>Share public keys with your contact</p>
+        </div>
+        <div class="process-step">
+          <div class="step-number">3</div>
+          <h3>Encrypt message</h3>
+          <p>Use their public key to encrypt your message</p>
+        </div>
+        <div class="process-step">
+          <div class="step-number">4</div>
+          <h3>Decrypt message</h3>
+          <p>They use their private key to decrypt it</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo-layout">
+      <div class="demo-keys">
+
+        <div class="card card--flat">
+          <h3 class="card__title">Your private key</h3>
+          <p class="card__sub">Keep this secret — it decrypts messages sent to you.</p>
+          <div id="private-key" class="key-value" style="min-height:0; position:static; margin-bottom:14px;">Not generated yet</div>
+          <button id="generate-keys" class="btn btn--primary btn--block btn--sm"><i class="fa-solid fa-key"></i>Generate keys</button>
+        </div>
+
+        <div class="card card--flat">
+          <h3 class="card__title">Your public key</h3>
+          <p class="card__sub">Share this with your friend to start.</p>
+          <div id="public-key" class="key-value" style="min-height:0; position:static; margin-bottom:14px;">Not generated yet</div>
+          <button id="copy-public-key" class="btn btn--ghost btn--block btn--sm" disabled><i class="fa-solid fa-copy"></i>Copy public key</button>
+        </div>
+
+        <div class="card card--flat">
+          <h3 class="card__title">Friend's public key</h3>
+          <p class="card__sub">Paste the key you received from your contact.</p>
+          <div id="friend-public-key" class="key-value" style="min-height:0; position:static; margin-bottom:14px;">Not received yet</div>
+          <textarea class="input" id="friend-key-input" placeholder="Paste your friend's public key here" rows="3" disabled style="margin-bottom:14px;"></textarea>
+          <button id="add-friend-key" class="btn btn--ghost btn--block btn--sm" disabled><i class="fa-solid fa-user-plus"></i>Add friend's key</button>
+        </div>
+
+        <div class="card card--flat">
+          <h3 class="card__title">Session status</h3>
+          <div id="session-status" class="muted" style="margin-bottom:14px;">Not established</div>
+          <button id="establish-session" class="btn btn--soft btn--block btn--sm" disabled><i class="fa-solid fa-handshake"></i>Establish secure session</button>
+        </div>
+
+      </div>
+
+      <div class="demo-chat">
+        <div class="chat-header">
+          <div class="chat-header-avatar"><i class="fa-solid fa-user"></i></div>
+          <div class="chat-header-info">
+            <div class="chat-header-name">John Smith</div>
+            <div class="chat-header-status" id="encryption-indicator">
+              <i class="fa-solid fa-circle" style="font-size: 0.6rem; color: var(--gray);"></i>
+              <span id="encryption-status-text">Not encrypted</span>
+            </div>
+          </div>
+          <button class="btn btn--ghost btn--circle" disabled><i class="fa-solid fa-phone"></i></button>
+        </div>
+
+        <div class="demo-msgs chat-messages" id="chat-messages">
+          <div class="message received">
+            <div class="message-text">Welcome to ThreatX! Generate keys and establish a secure session to start encrypted messaging.</div>
+            <div class="message-time">10:24 AM</div>
+          </div>
+        </div>
+
+        <div class="demo-composer">
+          <input class="input" type="text" id="message-input" placeholder="Type your message..." disabled>
+          <button id="send-button" class="btn btn--primary btn--circle" disabled><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+
+        <div class="enc-status">
+          <i class="fa-solid fa-shield-halved" style="color: var(--ok);"></i>
+          <span id="security-status">Secure session not established. Messages are not encrypted.</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  © ThreatX — Post-quantum secure communication
+</footer>
+
+<script src="{{ url_for('static', filename='js/threatx.js') }}"></script>
+<script>
+    // Simple encryption simulation for demo purposes
+    class CryptoSim {
+        static generateKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let key = '';
+            for (let i = 0; i < 16; i++) {
+                key += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return key;
+        }
+        
+        static encrypt(message, key) {
+            // This is a simple Caesar cipher for demonstration only
+            // Not suitable for real encryption
+            let result = '';
+            for (let i = 0; i < message.length; i++) {
+                let charCode = message.charCodeAt(i);
+                // Simple transformation using the key
+                const keyChar = key.charCodeAt(i % key.length);
+                charCode = charCode ^ (keyChar % 32);
+                result += String.fromCharCode(charCode);
+            }
+            return btoa(result); // Base64 encode to make it look encrypted
+        }
+        
+        static decrypt(encryptedMessage, key) {
+            // Reverse the simple Caesar cipher
+            try {
+                const decoded = atob(encryptedMessage);
+                let result = '';
+                for (let i = 0; i < decoded.length; i++) {
+                    let charCode = decoded.charCodeAt(i);
+                    const keyChar = key.charCodeAt(i % key.length);
+                    charCode = charCode ^ (keyChar % 32);
+                    result += String.fromCharCode(charCode);
+                }
+                return result;
+            } catch (e) {
+                return "[Decryption Error]";
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // DOM elements
+        const generateKeysBtn = document.getElementById('generate-keys');
+        const copyPublicKeyBtn = document.getElementById('copy-public-key');
+        const addFriendKeyBtn = document.getElementById('add-friend-key');
+        const establishSessionBtn = document.getElementById('establish-session');
+        const sendButton = document.getElementById('send-button');
+        const messageInput = document.getElementById('message-input');
+        const chatMessages = document.getElementById('chat-messages');
+        
+        // State variables
+        let privateKey = null;
+        let publicKey = null;
+        let friendPublicKey = null;
+        let sessionKey = null;
+        let sessionEstablished = false;
+        
+        // Generate keys
+        generateKeysBtn.addEventListener('click', function() {
+            privateKey = CryptoSim.generateKey();
+            publicKey = CryptoSim.generateKey();
+            
+            document.getElementById('private-key').textContent = privateKey;
+            document.getElementById('public-key').textContent = publicKey;
+            
+            // Enable next steps
+            copyPublicKeyBtn.disabled = false;
+            document.getElementById('friend-key-input').disabled = false;
+            addFriendKeyBtn.disabled = false;
+            
+            addMessage('system', 'Keys generated successfully. Copy your public key and share it with your friend.');
+        });
+        
+        // Copy public key
+        copyPublicKeyBtn.addEventListener('click', function() {
+            navigator.clipboard.writeText(publicKey).then(() => {
+                addMessage('system', 'Public key copied to clipboard. Send it to your friend.');
+            });
+        });
+        
+        // Add friend's public key
+        addFriendKeyBtn.addEventListener('click', function() {
+            const friendKeyInput = document.getElementById('friend-key-input');
+            friendPublicKey = friendKeyInput.value.trim();
+            
+            if (friendPublicKey.length < 5) {
+                addMessage('system', 'Please enter a valid public key.');
+                return;
+            }
+            
+            document.getElementById('friend-public-key').textContent = friendPublicKey;
+            establishSessionBtn.disabled = false;
+            
+            addMessage('system', "Friend's public key added. Click 'Establish Secure Session' to begin encrypted messaging.");
+        });
+        
+        // Establish secure session
+        establishSessionBtn.addEventListener('click', function() {
+            // In a real application, this would involve a key exchange protocol
+            // For this demo, we'll just generate a session key
+            sessionKey = CryptoSim.generateKey();
+            sessionEstablished = true;
+            
+            document.getElementById('session-status').textContent = 'Secure session established';
+            document.getElementById('encryption-indicator').style.color = 'var(--success)';
+            document.getElementById('encryption-status-text').textContent = 'End-to-end encrypted';
+            document.getElementById('security-status').textContent = 'Secure session established. Messages are end-to-end encrypted.';
+            
+            messageInput.disabled = false;
+            sendButton.disabled = false;
+            
+            addMessage('system', 'Secure session established! You can now send encrypted messages.');
+            addMessage('received', 'Hey, secure connection is ready! Send me an encrypted message.', true);
+        });
+        
+        // Send message
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || !sessionEstablished) return;
+            
+            // Encrypt the message
+            const encryptedMessage = CryptoSim.encrypt(message, sessionKey);
+            
+            // Display the encrypted message
+            addMessage('sent', message, true, encryptedMessage);
+            
+            // Clear input
+            messageInput.value = '';
+            
+            // Simulate response after a delay
+            setTimeout(() => {
+                const responses = [
+                    "Thanks for your secure message!",
+                    "I got your encrypted message and decrypted it successfully.",
+                    "This encryption is working great!",
+                    "Your message was received securely."
+                ];
+                const response = responses[Math.floor(Math.random() * responses.length)];
+                const encryptedResponse = CryptoSim.encrypt(response, sessionKey);
+                addMessage('received', response, true, encryptedResponse);
+            }, 2000);
+        }
+        
+        function addMessage(sender, text, encrypted = false, encryptedText = null) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.classList.add(sender === 'sent' ? 'sent' : 'received');
+            
+            const now = new Date();
+            const timeString = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+            
+            let messageHTML = `
+                <div class="message-text">${text}</div>
+            `;
+            
+            if (encrypted && encryptedText) {
+                messageHTML += `
+                    <div class="message-encrypted">Encrypted: ${encryptedText}</div>
+                    <div class="message-controls">
+                        <button class="btn btn-outline decrypt-btn" style="font-size: 0.7rem; padding: 3px 8px;">
+                            <i class="fas fa-unlock"></i> Decrypt
+                        </button>
+                    </div>
+                `;
+            }
+            
+            messageHTML += `<div class="message-time">${timeString}</div>`;
+            
+            messageElement.innerHTML = messageHTML;
+            chatMessages.appendChild(messageElement);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Add decrypt button functionality
+            if (encrypted) {
+                const decryptBtn = messageElement.querySelector('.decrypt-btn');
+                if (decryptBtn) {
+                    decryptBtn.addEventListener('click', function() {
+                        const encryptedMsg = encryptedText;
+                        const decrypted = CryptoSim.decrypt(encryptedMsg, sessionKey);
+                        alert(`Decrypted message: ${decrypted}`);
+                    });
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
