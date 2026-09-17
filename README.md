@@ -182,10 +182,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This project is created for educational purposes. Please add an appropriate license file based on your requirements.
 
-## 👥 Authors
-
-- **Ishwari Patil** - [GitHub Profile](https://github.com/IshwariPatil1904)
-
 ## 🙏 Acknowledgments
 
 - Open Quantum Safe (OQS) project for quantum-safe cryptography
