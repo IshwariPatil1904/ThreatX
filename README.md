@@ -1,35 +1,38 @@
 # ThreatX: Quantum-Resistant Secure Communication Platform
 
-A next-generation secure messaging platform that combines Quantum Key Distribution (QKD), Post-Quantum Cryptography (PQC), and traditional encryption methods to provide quantum-resistant secure communication.
+A next-generation secure messaging platform that combines Quantum Key Distribution (QKD), Post-Quantum Cryptography (PQC) with Kyber512, X25519 key exchange, and AES-256 encryption to provide quantum-resistant secure communication.
 
 ## 🚀 Features
 
 ### Security Features
-- **Quantum Key Distribution (QKD)**: BB84 protocol simulation for quantum-safe key exchange
-- **Post-Quantum Cryptography**: Kyber512 KEM (Key Encapsulation Mechanism) for quantum-resistant encryption
-- **Hybrid Encryption**: Combines QKD, PQC, and traditional AES-256 encryption
-- **Digital Signatures**: HMAC-based message authentication
-- **SSL/TLS Support**: Secure HTTPS communication
+- **Quantum Key Distribution (QKD)**: Simulated BB84 protocol for quantum-safe key exchange
+- **Post-Quantum Cryptography**: Kyber512 KEM (Key Encapsulation Mechanism) — via `oqs` (liboqs) or `pqcrypto`, with graceful simulated fallback if native libraries are unavailable
+- **Hybrid Key Derivation**: XOR-combines QKD and Kyber shared secrets into a 32-byte AES-256 key
+- **Hybrid Encryption Modes**: Two session modes — Kyber512 Hybrid (PQC) and QKD-AES (simulated)
+- **End-to-End Encryption**: AES-GCM with fresh keys per session (IV-per-message)
+- **X25519 ECDH**: Browser-side key agreement paired with the Kyber shared secret
+- **Message Authentication**: HMAC-SHA256 signatures prevent tampering
+- **SSL/TLS Support**: Secure HTTPS communication with self-signed certificates
 
 ### Application Features
 - Real-time messaging using WebSocket (Socket.IO)
-- User authentication and session management
+- User authentication (login/signup by username or email) and session management
 - MongoDB database integration
-- Secure message storage and retrieval
-- Multi-user chat rooms
-- User profiles and contact management
-- Password recovery system
+- Multi-user chat rooms with live online-user tracking
+- User profiles, team page, FAQ, contact, terms, and about pages
+- Password recovery page
 
 ## 🛠️ Technology Stack
 
 - **Backend**: Python Flask
-- **Real-time Communication**: Flask-SocketIO
-- **Database**: MongoDB
-- **Cryptography Libraries**: 
-  - `oqs` (Open Quantum Safe)
-  - `pqcrypto` (Post-Quantum Cryptography)
-  - Native Python cryptographic functions
-- **Frontend**: HTML, CSS, JavaScript
+- **Real-time Communication**: Flask-SocketIO (threading async mode)
+- **Database**: MongoDB (`cryptexq_db` — collections: `messages`, `users`, `sessions`)
+- **Cryptography**:
+  - `oqs` (Open Quantum Safe / liboqs) — native Kyber512 KEM
+  - `pqcrypto` — optional Kyber512 provider
+  - Python `hmac` / `hashlib` — integrity and key derivation
+  - Browser WebCrypto — AES-GCM and X25519 ECDH on the client
+- **Frontend**: HTML, CSS, JavaScript (no framework)
 - **SSL/TLS**: Self-signed certificates for HTTPS
 
 ## 📋 Prerequisites
@@ -42,110 +45,128 @@ A next-generation secure messaging platform that combines Quantum Key Distributi
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/IshwariPatil1904/CryptexQ-Quantum-Secure-Chat.git
-cd CryptexQ-Quantum-Secure-Chat
+git clone https://github.com/IshwariPatil1904/ThreatX.git
+cd ThreatX
 ```
 
 2. **Install required packages**
 ```bash
-pip install flask flask-cors flask-socketio pymongo oqs pqcrypto python-socketio
+pip install flask flask-cors flask-socketio pymongo
+pip install oqs            # native Kyber512 (recommended)
+pip install pqcrypto       # optional alternative Kyber provider
 ```
+
+> If `oqs`/`pqcrypto` are not installed, the server automatically runs in **simulated mode** so development is still possible.
 
 3. **Set up MongoDB**
 - Install MongoDB locally or use MongoDB Atlas
-- Update the `MONGO_URI` in `app.py` if using a remote database:
-```python
-MONGO_URI = "your_mongodb_connection_string"
+- Update the `MONGO_URI` environment variable if using a remote database:
+```powershell
+$env:MONGO_URI = "mongodb://localhost:27017/"
 ```
 
-4. **Generate SSL Certificates (if needed)**
+4. **Generate SSL Certificates**
 ```bash
-cd EDI/certs
+cd ThreatX/certs
 openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
 ```
 
 ## 🚀 Running the Application
 
-1. **Navigate to the EDI directory**
 ```bash
-cd EDI
-```
-
-2. **Run the Flask application**
-```bash
+cd ThreatX
 python app.py
 ```
 
-3. **Access the application**
-- Open your browser and navigate to: `https://localhost:5000`
-- Accept the self-signed certificate warning (for development)
+Open your browser and navigate to `https://localhost:5000` (accept the self-signed certificate warning for development).
 
 ## 📁 Project Structure
 
 ```
-EDI/
-├── app.py              # Main Flask application
-├── crypto_utils.py     # Traditional cryptography utilities (AES, HMAC)
-├── pqc_utils.py        # Post-Quantum Cryptography (Kyber)
+ThreatX/
+├── app.py              # Main Flask application + Socket.IO events
+├── crypto_utils.py     # AES + HMAC-SHA256 utilities (and simulation fallback)
+├── pqc_utils.py        # Post-Quantum (Kyber512) helpers + hybrid key derivation
 ├── qkd.py              # Quantum Key Distribution (BB84 simulation)
 ├── certs/              # SSL/TLS certificates
 │   ├── cert.pem
 │   └── key.pem
+├── static/             # Frontend assets
+│   ├── css/threatx.css
+│   └── js/threatx.js
 └── templates/          # HTML templates
     ├── index.html      # Landing page
     ├── home.html       # Home page
     ├── login.html      # Login page
     ├── signup.html     # Registration page
-    ├── talkroom.html   # Chat room
-    ├── secure_msg.html # Secure messaging
+    ├── forgetpg.html   # Password recovery page
+    ├── talkroom.html   # Chat room / secure messaging
     ├── profile.html    # User profile
     ├── about.html      # About page
     ├── team.html       # Team page
     ├── faq.html        # FAQ page
+    ├── demo.html       # Demo page
     ├── contact.html    # Contact page
-    └── terms.html      # Terms and conditions
+    ├── terms.html      # Terms and conditions
+    └── logout.html     # Logout page
 ```
 
 ## 🔐 Security Implementation
 
-### Three-Layer Encryption Model
+### Encryption Modes
 
-1. **QKD Layer**: Generates quantum-safe keys using BB84 protocol simulation
-2. **PQC Layer**: Uses Kyber512 for post-quantum secure key encapsulation
-3. **AES Layer**: Traditional AES-256 encryption for message content
+1. **PQC Hybrid Mode** (`request_start_session`)
+   - Kyber512 KEM encapsulates a shared secret with the recipient's public key
+   - Both sides independently derive the same 32-byte shared secret
+   - Combined with browser X25519 ECDH keys for forward secrecy
 
-### Key Features
+2. **QKD-AES Mode** (`start_qkd_session`)
+   - Simulated BB84 protocol generates shared key bits (512 bits)
+   - Bits are sifted, error-corrected, and hashed with SHA-256 into a 32-byte AES-256 key
 
-- **Hybrid Key Derivation**: Combines QKD and PQC keys for maximum security
-- **Message Authentication**: HMAC signatures prevent tampering
-- **Secure Sessions**: Session management with encrypted storage
-- **Forward Secrecy**: New keys generated for each session
+3. **Hybrid Key Derivation** (`pqc_utils.derive_hybrid_aes_key`)
+   - SHA-256 hashes the QKD and PQC components separately
+   - XOR-combines both 32-byte hashes into the final AES-256 key
+
+### Message Flow
+
+- Client encrypts the message with AES-GCM (WebCrypto) using the session key
+- HMAC-SHA256 signatures protect message integrity
+- Ciphertext, IV, and metadata are forwarded only to the intended recipient
+- Delivery acknowledgements are returned to the sender
 
 ## 🌐 API Endpoints
 
 ### Main Routes
 - `GET /` - Landing page
-- `GET /home` - Home page (requires authentication)
+- `GET /home` - Home page
 - `GET /login` - Login page
 - `GET /signup` - Registration page
+- `GET /logout` - Logout page
+- `GET /forgetpg` - Password recovery
 - `GET /talkroom` - Chat room interface
 - `GET /profile` - User profile page
+- `GET /about`, `/team`, `/faq`, `/contact`, `/term`, `/demo` - Static info pages
 
 ### Socket.IO Events
-- `connect` - Client connection
-- `send_message` - Send encrypted message
-- `receive_message` - Receive encrypted message
-- `user_joined` - User joined notification
-- `user_left` - User left notification
+- `connect` / `disconnect` - Client connection lifecycle
+- `register` - Register a socket with a username + X25519 public key
+- `request_start_session` - Begin a Kyber512 hybrid session
+- `start_qkd_session` - Begin a simulated QKD session
+- `send_encrypted_message` - Forward an encrypted message to a recipient
+- `online_users` - Broadcast the live list of connected users
+- `registered`, `kyber_shared_for_initiator`, `kyber_ready_peer`, `qkd_shared_key`, `new_encrypted_message`, `message_delivered`, `session_initiated` - Session and delivery events
 
-## 🧪 Testing
+## 🧪 Testing / Production Notes
 
 The application uses simulated quantum key distribution for demonstration purposes. In a production environment:
 
 1. Replace QKD simulation with actual quantum hardware/protocols
-2. Use hardware security modules (HSM) for key storage
-3. Implement proper certificate management
-4. Add comprehensive logging and monitoring
+2. Swap the simulated AES utilities for a vetted library (e.g. `cryptography`)
+3. Use hardware security modules (HSM) for key storage
+4. Implement proper certificate management (not self-signed)
+5. Add comprehensive logging and monitoring
+6. Add real password hashing (e.g. bcrypt/argon2) instead of plaintext storage
 
 ## 🤝 Contributing
 
